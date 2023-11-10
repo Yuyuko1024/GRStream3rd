@@ -63,8 +63,10 @@ public class WebSocketService extends Service {
     private Notification.Builder notiBuilder;
     private Notification notification;
     private MediaSessionCallback callback;
+    private Handler toastHandler;
     private URI uri;
     private int clientId;
+    private int recheck = 0;
 
     public static void setCallback(WsServiceInterface dataInterface) {
         wsInterface = dataInterface;
@@ -76,6 +78,7 @@ public class WebSocketService extends Service {
         uri = URI.create(Constants.WS_URL);
         SharedPreferences sharedPreferences = getSharedPreferences("ws", MODE_PRIVATE);
         spEditor = sharedPreferences.edit();
+        toastHandler = new Handler(Looper.getMainLooper());
         notiMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         metadata = new MediaMetadata.Builder();
         mMediaSession = new MediaSession(this, "MyPlayer");
@@ -120,8 +123,53 @@ public class WebSocketService extends Service {
             public void onMessage(String message) {
                 extractData(message);
             }
+
+            @Override
+            public void onClose(int code, String reason, boolean remote) {
+                super.onClose(code, reason, remote);
+                String reasonLog;
+                if (code == 1000 && remote) {
+                    reasonLog = "Socket connection closed cleanly,";
+                } else {
+                    reasonLog = "Socket connection closed unexpectedly, the connection will be retried at a later time.";
+                    reConnectSocket();
+                }
+                Log.d(TAG, reasonLog + " code=" + code + ", reason=" + reason);
+            }
         };
         wsClient.setSocketFactory(getDefaultSSLSocketFactory());
+    }
+
+    private void reConnectSocket() {
+        recheck++;
+        postSocketErrorToast(recheck);
+        double timeOut;
+        switch (recheck) {
+            case 1:
+                timeOut = Math.floor((Math.random() * 10) + 1);
+                break;
+            case 2:
+                timeOut = Math.floor((Math.random() * 10) + 10);
+                break;
+            case 3:
+                timeOut = Math.floor((Math.random() * 15) + 15);
+                break;
+            case 4:
+                timeOut = Math.floor((Math.random() * 15) + 30);
+                break;
+            default:
+                timeOut = Math.floor((Math.random() * 20) + 45);
+                break;
+        }
+        Timer reConnTimer = new Timer();
+        reConnTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                initWebSocket();
+                initConn();
+            }
+        }, (long)(timeOut * 1000));
+        Log.d(TAG, "will reconnect in " + (timeOut * 1000) + " millisecond later...");
     }
 
     /**
@@ -131,7 +179,6 @@ public class WebSocketService extends Service {
      */
     private void extractData(String message) {
         if (message != null) {
-            Handler toastHandler = new Handler(Looper.getMainLooper());
             Log.d(TAG, "socket message:" + message);
             if (isJson(message)) {
                 if (message.contains("welcome")) {
@@ -148,10 +195,10 @@ public class WebSocketService extends Service {
                     genBeanData(message);
                 }
             } else if (message.startsWith("Error")) {
-                toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: \n Received an error message from server: \n" + message, Toast.LENGTH_SHORT).show());
+                toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: \n 收到服务器的错误信息: \n" + message, Toast.LENGTH_SHORT).show());
             } else {
                 Log.e(TAG, "get invalid json data!");
-                toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: received error json data !", Toast.LENGTH_SHORT).show());
+                toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: 错误json数据!", Toast.LENGTH_SHORT).show());
             }
             /*if (message.startsWith("welcome")) {
                 clientId = Integer.parseInt(message.split("welcome:")[1]);
@@ -255,6 +302,13 @@ public class WebSocketService extends Service {
      */
     private void sendPong() {
         wsClient.send("{\"message\":\"pong\", \"id\":" + clientId + "}");
+    }
+
+    /**
+     * 显示WebSocket错误断开toast
+     */
+    private void postSocketErrorToast(int recheck) {
+        toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: Socket连接意外断开！正在重试次数：" + recheck, Toast.LENGTH_SHORT).show());
     }
 
     private void genMediaNotification(NowPlayingBean bean) {
