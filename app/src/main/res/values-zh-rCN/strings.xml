@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Gensokyo Radio 3rd Eyes</string>
+    <string name="dialog_notice_message">如你所见，这是一个Fan-made第三方Gensokyo Radio客户端。使用Material Design 3组件和ExoPlayer组成了一个简单的电台客户端，支持部分最新的Android功能。不过仅支持串流播放最高 256kbps mp3串流。如果你想支持Gensokyo Radio，请点击下方的图章进入Google Play下载官方完整版App享受更高质量的流媒体以及更多功能！</string>
+    <string name="play_badge_content_desc">在Google Play下载完整版App</string>
+    <string name="fetch_song_data_toast">正在获取当前播放的歌曲信息…</string>
+    <string name="notice_titie">提示</string>
+    <string name="stream_resume_toast">电台播放恢复</string>
+    <string name="stream_stop_toast">电台播放停止</string>
+    <string name="song_info_title">当前音乐信息</string>
+    <string name="song_info">
+        标题: <xliff:g id="title">%s</xliff:g>\n
+        编曲/演唱: <xliff:g id="artist">%s</xliff:g>\n
+        专辑:  <xliff:g id="album">%s</xliff:g>\n
+        年份: <xliff:g id="year">%s</xliff:g>\n
+        社团: <xliff:g id="circle">%s</xliff:g>
+    </string>
+</resources>
