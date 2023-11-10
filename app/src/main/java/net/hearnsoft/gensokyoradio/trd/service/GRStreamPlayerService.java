@@ -6,8 +6,10 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
+import androidx.media3.common.AudioAttributes;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
 
 import net.hearnsoft.gensokyoradio.trd.MainActivity;
 import net.hearnsoft.gensokyoradio.trd.R;
@@ -15,7 +17,7 @@ import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 
 public class GRStreamPlayerService extends Service{
 
-    private static ExoPlayer player;
+    private static Player player;
     private ServiceBinder binder = new ServiceBinder();
 
     public class ServiceBinder extends Binder {
@@ -38,7 +40,9 @@ public class GRStreamPlayerService extends Service{
     }
 
     private void initExoPlayer() {
-        player = new ExoPlayer.Builder(this).build();
+        player = new ExoPlayer.Builder(this)
+                .setAudioAttributes(AudioAttributes.DEFAULT, true)
+                .build();
         MediaItem item = MediaItem.fromUri(Constants.GR_STREAM_URL);
         player.setMediaItem(item);
         player.setPlayWhenReady(false);
