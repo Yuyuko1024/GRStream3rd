@@ -30,8 +30,10 @@ import com.google.gson.JsonParser;
 import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.beans.NowPlayingBean;
 import net.hearnsoft.gensokyoradio.trd.beans.SocketClientBeans;
+import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.NullStringToEmptyAdapterFactory;
+import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.ws.GRWebSocketClient;
 
 import org.java_websocket.handshake.ServerHandshake;
@@ -59,6 +61,7 @@ public class WebSocketService extends Service {
     private MediaSession mMediaSession;
     private Gson gson;
     private Bitmap cover;
+    private SongDataModel songDataModel;
     private NotificationManager notiMgr;
     private Notification.Builder notiBuilder;
     private Notification notification;
@@ -88,6 +91,8 @@ public class WebSocketService extends Service {
         callback = new MediaSessionCallback();
         mMediaSession.setActive(true);
         mMediaSession.setCallback(callback);
+        // 获取全局ViewModel
+        songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
         gson = new GsonBuilder()
                 .disableHtmlEscaping()
                 .setLenient()
@@ -277,6 +282,15 @@ public class WebSocketService extends Service {
         wsInterface.beanReceived(bean);
 
         genMediaNotification(bean);
+        setViewModelData(bean);
+    }
+
+    private void setViewModelData(NowPlayingBean bean) {
+        songDataModel.getTitle().setValue(bean.getTitle());
+        songDataModel.getArtist().setValue(bean.getArtist());
+        songDataModel.getAlbum().setValue(bean.getAlbum());
+        songDataModel.getCoverUrl().setValue(bean.getAlbumArt());
+        songDataModel.getIsUpdatedInfo().setValue(true);
     }
 
     /**
