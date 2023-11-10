@@ -31,10 +31,12 @@ import net.hearnsoft.gensokyoradio.trd.beans.NowPlayingBean;
 import net.hearnsoft.gensokyoradio.trd.beans.SongDataBean;
 import net.hearnsoft.gensokyoradio.trd.databinding.ActivityMainBinding;
 import net.hearnsoft.gensokyoradio.trd.databinding.DialogNoticeBinding;
+import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.service.GRStreamPlayerService;
 import net.hearnsoft.gensokyoradio.trd.service.WebSocketService;
 import net.hearnsoft.gensokyoradio.trd.service.WsServiceInterface;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
+import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -54,11 +56,13 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     private static final String TAG = MainActivity.class.getSimpleName();
     private final ExecutorService signalThreadPool = Executors.newSingleThreadExecutor();
     private ActivityMainBinding binding;
+    private SongDataModel songDataModel;
     private Intent WsIntent;
     private Intent PlayerIntent;
     private Timer timer;
     private SharedPreferences sharedPreferences;
     private boolean isBound = false;
+    private boolean isUiPaused = false;
     private boolean isPlaying = false;
     private boolean isUpdateProgress = false;
     private SongDataBean dataBean;
@@ -102,6 +106,8 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         sharedPreferences = getSharedPreferences("ws", Context.MODE_PRIVATE);
         initVisualier();
         binding.play.setEnabled(false);
+        // 获取全局ViewModel
+        songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
         binding.songInfoBtn.setOnClickListener(v -> {
             CompletableFuture<Boolean> future = getNowPlaying();
             Toast.makeText(this, R.string.fetch_song_data_toast, Toast.LENGTH_SHORT).show();
@@ -262,12 +268,26 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     protected void onResume() {
         super.onResume();
         Log.d("MainActivity", "onResume: ");
+        if (isUiPaused && Boolean.TRUE.equals(songDataModel.getIsUpdatedInfo().getValue())) {
+            binding.title.setText(songDataModel.getTitle().getValue());
+            binding.artist.setText(songDataModel.getArtist().getValue());
+            Glide.with(this).load(songDataModel.getCoverUrl()).placeholder(R.drawable.ic_album).into(binding.cover);
+            isUiPaused = false;
+            songDataModel.getIsUpdatedInfo().setValue(false);
+        }
+        binding.visualizerView.setPlaying(true);
+        binding.visualizerView.setVisible(true);
+        binding.visualizerView.setPowerSaveMode(false);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d("MainActivity", "onPause: ");
+        isUiPaused = true;
+        binding.visualizerView.setPlaying(false);
+        binding.visualizerView.setVisible(false);
+        binding.visualizerView.setPowerSaveMode(true);
     }
 
     @Override
