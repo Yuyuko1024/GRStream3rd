@@ -100,11 +100,12 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         super.onCreate(savedInstanceState);
         //Debug.startMethodTracing("app_trace");
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        if (requestPermissions()) {
+            initVisualizer();
+        }
         setContentView(binding.getRoot());
         WebSocketService.setCallback(this);
-        requestPermissions();
         sharedPreferences = getSharedPreferences("ws", Context.MODE_PRIVATE);
-        initVisualier();
         binding.play.setEnabled(false);
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
@@ -134,23 +135,48 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
                 binding.play.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_pause, getTheme()));
             }
         });
+        songDataModel.getBufferingState().observe(this, bufferingState -> {
+            switch (bufferingState) {
+                case 0:
+                    binding.bufferState.setText("IDLE");
+                    break;
+                case 1:
+                    binding.bufferState.setText("BUFFERING");
+                    break;
+                case 2:
+                    binding.bufferState.setText("READY");
+                    break;
+            }
+        });
         showNoticeDialog();
         startSocketService();
         //Debug.stopMethodTracing();
     }
 
-    private void requestPermissions() {
+    private boolean requestPermissions() {
         if (Build.VERSION.SDK_INT >= 33) {
             if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED ||
                     checkSelfPermission(Manifest.permission.RECORD_AUDIO ) != PackageManager.PERMISSION_GRANTED ||
                     checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS,Manifest.permission.RECORD_AUDIO,
                                     Manifest.permission.READ_PHONE_STATE}, 1);
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO ) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO,
+                        Manifest.permission.READ_PHONE_STATE}, 1);
+                return false;
+            } else {
+                return true;
             }
         }
     }
 
-    private void initVisualier() {
+    private void initVisualizer() {
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO ) == PackageManager.PERMISSION_GRANTED) {
             binding.visualizerView.initialize(this);
             binding.visualizerView.setPlaying(true);
@@ -270,10 +296,10 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         Log.d("MainActivity", "onResume: ");
         if (isUiPaused && Boolean.TRUE.equals(songDataModel.getIsUpdatedInfo().getValue())) {
             binding.title.setText(songDataModel.getTitle().getValue());
-            binding.artist.setText(songDataModel.getArtist().getValue());
-            Glide.with(this).load(songDataModel.getCoverUrl()).placeholder(R.drawable.ic_album).into(binding.cover);
+            binding.artist.setText(songDataModel.getArtist().getValue() + " - " + songDataModel.getAlbum().getValue());
+            Glide.with(this).load(songDataModel.getCoverUrl().getValue()).placeholder(R.drawable.ic_album).into(binding.cover);
             isUiPaused = false;
-            songDataModel.getIsUpdatedInfo().setValue(false);
+            songDataModel.getIsUpdatedInfo().postValue(false);
         }
         binding.visualizerView.setPlaying(true);
         binding.visualizerView.setVisible(true);
