@@ -171,25 +171,6 @@ public class WebSocketService extends Service {
                 Log.e(TAG, "get invalid json data!");
                 toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: 错误json数据!", Toast.LENGTH_SHORT).show());
             }
-            /*if (message.startsWith("welcome")) {
-                clientId = Integer.parseInt(message.split("welcome:")[1]);
-                Log.d(TAG, "get Client ID: " + clientId);
-                spEditor.putInt("clientId", clientId);
-                spEditor.apply();
-            } else if (message.equals("{\"message\":\"ping\"}")) {
-                Log.d(TAG, "get ping! send pong!");
-                sendPong();
-            } else if (message.startsWith("Error")) {
-
-                toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: \n Received an error message from server: \n" + message, Toast.LENGTH_SHORT).show());
-            } else {
-                // Generate bean data
-                if (isJson(message)) {
-                    genBeanData(message);
-                } else {
-                    Log.e(TAG, "get invalid json data!");
-                }
-            }*/
         } else {
             Log.e(TAG, "get null data!");
         }
