@@ -147,6 +147,16 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:id="@+id/buffer_state"
+                        android:text="IDLE"/>
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:layout_gravity="center_vertical|end"
                         android:id="@+id/totalTime"

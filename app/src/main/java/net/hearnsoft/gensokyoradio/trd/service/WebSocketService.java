@@ -1,33 +1,21 @@
 package net.hearnsoft.gensokyoradio.trd.service;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaMetadata;
-import android.media.session.MediaController;
-import android.media.session.MediaSession;
-import android.media.session.PlaybackState;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.beans.NowPlayingBean;
 import net.hearnsoft.gensokyoradio.trd.beans.SocketClientBeans;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
@@ -36,13 +24,7 @@ import net.hearnsoft.gensokyoradio.trd.utils.NullStringToEmptyAdapterFactory;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.ws.GRWebSocketClient;
 
-import org.java_websocket.handshake.ServerHandshake;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutorService;
@@ -57,15 +39,8 @@ public class WebSocketService extends Service {
     private final ExecutorService signalThreadPool = Executors.newSingleThreadExecutor();
     private GRWebSocketClient wsClient;
     private SharedPreferences.Editor spEditor;
-    private MediaMetadata.Builder metadata;
-    private MediaSession mMediaSession;
     private Gson gson;
-    private Bitmap cover;
     private SongDataModel songDataModel;
-    private NotificationManager notiMgr;
-    private Notification.Builder notiBuilder;
-    private Notification notification;
-    private MediaSessionCallback callback;
     private Handler toastHandler;
     private URI uri;
     private int clientId;
@@ -82,15 +57,6 @@ public class WebSocketService extends Service {
         SharedPreferences sharedPreferences = getSharedPreferences("ws", MODE_PRIVATE);
         spEditor = sharedPreferences.edit();
         toastHandler = new Handler(Looper.getMainLooper());
-        notiMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        metadata = new MediaMetadata.Builder();
-        mMediaSession = new MediaSession(this, "MyPlayer");
-        NotificationChannel channel = new NotificationChannel(Constants.NOTIFICATION_CHANNEL_ID,
-                Constants.NOTIFICATION_CHANNEL_ID,  NotificationManager.IMPORTANCE_DEFAULT);
-        notiMgr.createNotificationChannel(channel);
-        callback = new MediaSessionCallback();
-        mMediaSession.setActive(true);
-        mMediaSession.setCallback(callback);
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
         gson = new GsonBuilder()
@@ -281,16 +247,23 @@ public class WebSocketService extends Service {
         NowPlayingBean bean = gson.fromJson(jsonData, NowPlayingBean.class);
         wsInterface.beanReceived(bean);
 
-        genMediaNotification(bean);
+        //genMediaNotification(bean);
         setViewModelData(bean);
+        sendUpdateIntent();
+    }
+
+    private void sendUpdateIntent() {
+        Intent updateIntent = new Intent();
+        updateIntent.setAction("net.hearnsoft.gensokyoradio.trd.UPDATE_NOTIFICATION");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(updateIntent);
     }
 
     private void setViewModelData(NowPlayingBean bean) {
-        songDataModel.getTitle().setValue(bean.getTitle());
-        songDataModel.getArtist().setValue(bean.getArtist());
-        songDataModel.getAlbum().setValue(bean.getAlbum());
-        songDataModel.getCoverUrl().setValue(bean.getAlbumArt());
-        songDataModel.getIsUpdatedInfo().setValue(true);
+        songDataModel.getTitle().postValue(bean.getTitle());
+        songDataModel.getArtist().postValue(bean.getArtist());
+        songDataModel.getAlbum().postValue(bean.getAlbum());
+        songDataModel.getCoverUrl().postValue(bean.getAlbumArt());
+        songDataModel.getIsUpdatedInfo().postValue(true);
     }
 
     /**
@@ -323,82 +296,6 @@ public class WebSocketService extends Service {
      */
     private void postSocketErrorToast(int recheck) {
         toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: Socket连接意外断开！正在重试次数：" + recheck, Toast.LENGTH_SHORT).show());
-    }
-
-    private void genMediaNotification(NowPlayingBean bean) {
-        metadata = new MediaMetadata.Builder()
-                .putString(MediaMetadata.METADATA_KEY_TITLE, bean.getTitle())
-                .putString(MediaMetadata.METADATA_KEY_ARTIST, bean.getArtist())
-                .putLong(MediaMetadata.METADATA_KEY_DURATION, bean.getDuration());
-        mMediaSession.setMetadata(metadata.build());
-        mMediaSession.setFlags(MediaSession.FLAG_HANDLES_MEDIA_BUTTONS | MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
-        if (downloadImage(bean.getAlbumArt())) {
-            buildNotification(mMediaSession.getSessionToken(), bean.getTitle(), bean.getArtist(), cover);
-        }
-    }
-
-    private boolean downloadImage(String url) {
-        boolean success = false;
-        Bitmap bitmap = null;
-        try {
-            URL imageUrl = new URL(url);
-            HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(10000);
-            conn.setInstanceFollowRedirects(true);
-            InputStream is = conn.getInputStream();
-            bitmap = BitmapFactory.decodeStream(is);
-            success = true;
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (bitmap != null) {
-                // 将Bitmap数据存入变量中
-                cover = bitmap;
-            }
-        }
-        return success;
-    }
-
-    /**
-     * Build Media Notification
-     * @param token
-     * @param name
-     * @param artist
-     * @param cover
-     */
-    private void buildNotification(MediaSession.Token token,String name,String artist,Bitmap cover) {
-        notiBuilder = new Notification.Builder(this,Constants.NOTIFICATION_CHANNEL_ID);
-        Notification.MediaStyle style = new Notification.MediaStyle()
-                .setMediaSession(token)
-                .setShowActionsInCompactView(0);
-        notiBuilder.setChannelId(Constants.NOTIFICATION_CHANNEL_ID)
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setStyle(style)
-                .setLargeIcon(cover)
-                .setContentTitle(name)
-                .setContentText(artist);
-        notification = notiBuilder.build();
-        notiMgr.notify(1,notification);
-    }
-
-    /**
-     * MediaSession callback
-     */
-    private static class MediaSessionCallback extends MediaSession.Callback {
-
-        @Override
-        public void onPlay() {
-            super.onPlay();
-
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-
-        }
     }
 
     /**

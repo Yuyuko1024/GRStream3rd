@@ -13,7 +13,7 @@ public class SongDataModel extends ViewModel {
     public MutableLiveData<String> getTitle() {
         if (title == null) {
             title = new MutableLiveData<>();
-            title.setValue("Title");
+            title.postValue("Title");
         }
         return title;
     }
@@ -21,7 +21,7 @@ public class SongDataModel extends ViewModel {
     public MutableLiveData<String> getArtist() {
         if (artist == null) {
             artist = new MutableLiveData<>();
-            artist.setValue("Artist");
+            artist.postValue("Artist");
         }
         return artist;
     }
@@ -29,7 +29,7 @@ public class SongDataModel extends ViewModel {
     public MutableLiveData<String> getAlbum() {
         if (album == null) {
             album = new MutableLiveData<>();
-            album.setValue("Album");
+            album.postValue("Album");
         }
         return album;
     }
@@ -37,7 +37,7 @@ public class SongDataModel extends ViewModel {
     public MutableLiveData<String> getCoverUrl() {
         if (coverUrl == null) {
             coverUrl = new MutableLiveData<>();
-            coverUrl.setValue("https://gensokyoradio.net/images/assets/gr-logo-placeholder.png");
+            coverUrl.postValue("https://gensokyoradio.net/images/assets/gr-logo-placeholder.png");
         }
         return coverUrl;
     }
@@ -45,10 +45,17 @@ public class SongDataModel extends ViewModel {
     public MutableLiveData<Boolean> getIsUpdatedInfo() {
         if (isUpdatedInfo == null) {
             isUpdatedInfo = new MutableLiveData<>();
-            isUpdatedInfo.setValue(false);
+            isUpdatedInfo.postValue(false);
         }
         return isUpdatedInfo;
     }
-
+    private MutableLiveData<Integer> bufferingState;
+    public MutableLiveData<Integer> getBufferingState() {
+        if (bufferingState == null) {
+            bufferingState = new MutableLiveData<>();
+            bufferingState.postValue(0);
+        }
+        return bufferingState;
+    }
 
 }
