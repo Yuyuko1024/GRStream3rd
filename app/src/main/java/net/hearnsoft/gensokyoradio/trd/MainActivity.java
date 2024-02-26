@@ -1,6 +1,7 @@
 package net.hearnsoft.gensokyoradio.trd;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +16,10 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,6 +42,7 @@ import net.hearnsoft.gensokyoradio.trd.service.WebSocketService;
 import net.hearnsoft.gensokyoradio.trd.service.WsServiceInterface;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
+import net.hearnsoft.gensokyoradio.trd.widgets.VisualizerView;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -65,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     private boolean isUiPaused = false;
     private boolean isPlaying = false;
     private boolean isUpdateProgress = false;
+    private boolean visualizerUsable = false;
+    private VisualizerView visualizerView;
     private SongDataBean dataBean;
     private GRStreamPlayerService playerService;
     private ServiceConnection connection = new ServiceConnection() {
@@ -178,11 +186,16 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
 
     private void initVisualizer() {
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO ) == PackageManager.PERMISSION_GRANTED) {
-            binding.visualizerView.initialize(this);
-            binding.visualizerView.setPlaying(true);
-            binding.visualizerView.setVisible(true);
-            binding.visualizerView.setColor(ContextCompat.getColor(this, R.color.system_accent));
-            binding.visualizerView.setPowerSaveMode(false);
+            visualizerView = new VisualizerView(this);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            params.gravity = Gravity.BOTTOM;
+            binding.container.addView(visualizerView, 0, params);
+            visualizerUsable = true;
+            visualizerView.initialize(this);
+            visualizerView.setPlaying(true);
+            visualizerView.setVisible(true);
+            visualizerView.setColor(ContextCompat.getColor(this, R.color.system_accent));
+            visualizerView.setPowerSaveMode(false);
         }
     }
 
@@ -301,9 +314,11 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
             isUiPaused = false;
             songDataModel.getIsUpdatedInfo().postValue(false);
         }
-        binding.visualizerView.setPlaying(true);
-        binding.visualizerView.setVisible(true);
-        binding.visualizerView.setPowerSaveMode(false);
+        if (visualizerUsable && visualizerView != null) {
+            visualizerView.setPlaying(true);
+            visualizerView.setVisible(true);
+            visualizerView.setPowerSaveMode(false);
+        }
     }
 
     @Override
@@ -311,9 +326,11 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         super.onPause();
         Log.d("MainActivity", "onPause: ");
         isUiPaused = true;
-        binding.visualizerView.setPlaying(false);
-        binding.visualizerView.setVisible(false);
-        binding.visualizerView.setPowerSaveMode(true);
+        if (visualizerUsable && visualizerView != null) {
+            visualizerView.setPlaying(false);
+            visualizerView.setVisible(false);
+            visualizerView.setPowerSaveMode(true);
+        }
     }
 
     @Override
