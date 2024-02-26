@@ -47,7 +47,7 @@
                 android:layout_marginBottom="8dp"
                 android:id="@+id/cover_container"
                 app:cardElevation="16dp"
-                app:cardCornerRadius="36dp">
+                app:cardCornerRadius="16dp">
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
