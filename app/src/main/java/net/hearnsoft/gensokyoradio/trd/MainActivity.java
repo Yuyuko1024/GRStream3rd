@@ -26,9 +26,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.media3.session.MediaController;
+import androidx.media3.session.SessionToken;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -48,6 +51,7 @@ import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -64,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     private ActivityMainBinding binding;
     private SongDataModel songDataModel;
     private Intent WsIntent;
-    private Intent PlayerIntent;
+    private ListenableFuture<MediaController> playerServiceFuture;
     private Timer timer;
     private SharedPreferences sharedPreferences;
     private boolean isBound = false;
@@ -74,20 +78,7 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     private boolean visualizerUsable = false;
     private VisualizerView visualizerView;
     private SongDataBean dataBean;
-    private GRStreamPlayerService playerService;
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            isBound = true;
-            GRStreamPlayerService.ServiceBinder playerBinder = (GRStreamPlayerService.ServiceBinder) service;
-            playerService = playerBinder.getService();
-        }
 
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            isBound = false;
-        }
-    };
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -134,7 +125,16 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
             });
         });
         binding.play.setOnClickListener(v -> {
-            playerService.playAndPauseStream();
+            if (playerServiceFuture.isDone() && !playerServiceFuture.isCancelled()) {
+                try {
+                    MediaController player = playerServiceFuture.get();
+                    if (player.isPlaying()) {
+                        player.pause();
+                    } else player.play();
+                } catch (ExecutionException | InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             if (isPlaying) {
                 isPlaying = false;
                 binding.play.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_play, getTheme()));
@@ -205,10 +205,11 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
                 WsIntent = new Intent(MainActivity.this, WebSocketService.class);
                 startService(WsIntent);
             }
-            if (PlayerIntent == null) {
-                PlayerIntent = new Intent(MainActivity.this, GRStreamPlayerService.class);
-                startService(PlayerIntent);
-                bindService(PlayerIntent, connection, BIND_AUTO_CREATE);
+            if (playerServiceFuture == null) {
+                playerServiceFuture = new MediaController.Builder(MainActivity.this,
+                        new SessionToken(MainActivity.this,
+                                new ComponentName(MainActivity.this, GRStreamPlayerService.class)
+                        )).buildAsync();
             }
         });
     }
@@ -343,8 +344,15 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         super.onDestroy();
         Log.d("MainActivity", "onDestroy: ");
         stopService(WsIntent);
-        stopService(PlayerIntent);
-        unbindService(connection);
+        if (playerServiceFuture.isDone() && !playerServiceFuture.isCancelled()) {
+            try {
+                playerServiceFuture.get().release();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        } else {
+            playerServiceFuture.cancel(true);
+        }
         timer.cancel();
     }
 

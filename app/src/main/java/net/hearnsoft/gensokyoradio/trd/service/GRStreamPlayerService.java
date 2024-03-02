@@ -33,21 +33,12 @@ public class GRStreamPlayerService extends MediaSessionService {
 
     private static final String TAG = GRStreamPlayerService.class.getSimpleName();
 
-    private static Player player;
     private MediaSession session;
-    private MediaItem streamItem;
     private SongDataModel dataModel;
-    private ServiceBinder binder = new ServiceBinder();
 
-    private Player.Listener playerListener = new Player.Listener() {
-        @Override
-        public void onIsPlayingChanged(boolean isPlaying) {
-            Player.Listener.super.onIsPlayingChanged(isPlaying);
-        }
-
+    private final Player.Listener playerListener = new Player.Listener() {
         @Override
         public void onPlaybackStateChanged(int playbackState) {
-            Player.Listener.super.onPlaybackStateChanged(playbackState);
             switch (playbackState) {
                 case Player.STATE_IDLE:
                     dataModel.getBufferingState().postValue(0);
@@ -63,19 +54,16 @@ public class GRStreamPlayerService extends MediaSessionService {
         }
     };
 
-    public class ServiceBinder extends Binder {
-        public GRStreamPlayerService getService() {
-            return GRStreamPlayerService.this;
-        }
-    }
-
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @UnstableApi
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if ("net.hearnsoft.gensokyoradio.trd.UPDATE_NOTIFICATION".equals(action)) {
-                updateMetadataInfo();
+                Log.d(TAG, "replace new data");
+                if (session != null) {
+                    session.getPlayer().replaceMediaItem(session.getPlayer().getCurrentMediaItemIndex(), updateMetadataInfo());
+                }
             }
         }
     };
@@ -84,15 +72,30 @@ public class GRStreamPlayerService extends MediaSessionService {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.e("hi","create player service");
         // 获取全局ViewModel
         dataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
-        registerBroadcasrReceiver();
-        if (player == null) {
-            initExoPlayer();
-            setMediaNotificationProvider(new DefaultMediaNotificationProvider(this));
-            session = new MediaSession.Builder(this, player)
-                    .setSessionActivity(getSingleTopActivity())
-                    .build();
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(receiver, new IntentFilter("net.hearnsoft.gensokyoradio.trd.UPDATE_NOTIFICATION"));
+        setMediaNotificationProvider(new DefaultMediaNotificationProvider.Builder(this).build());
+        session = new MediaSession.Builder(this, new ExoPlayer.Builder(this)
+                .setAudioAttributes(AudioAttributes.DEFAULT, true)
+                .build())
+                .setSessionActivity(getSingleTopActivity())
+                .build();
+        session.getPlayer().setMediaItem(updateMetadataInfo());
+        session.getPlayer().setPlayWhenReady(false);
+        session.getPlayer().prepare();
+        session.getPlayer().addListener(playerListener);
+    }
+
+    @Override
+    public void onTaskRemoved(@Nullable Intent rootIntent) {
+        Player player = session.getPlayer();
+        if (!player.getPlayWhenReady() || player.getMediaItemCount() == 0) {
+            // Stop the service if not playing, continue playing in the background
+            // otherwise.
+            stopSelf();
         }
     }
 
@@ -111,87 +114,39 @@ public class GRStreamPlayerService extends MediaSessionService {
         return session;
     }
 
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        super.onTaskRemoved(rootIntent);
-        if (player.isPlaying()) {
-            player.stop();
-        }
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    private void registerBroadcasrReceiver() {
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(receiver, new IntentFilter("net.hearnsoft.gensokyoradio.trd.UPDATE_NOTIFICATION"));
-    }
-
     @UnstableApi
-    private void updateMetadataInfo() {
-        Log.d(TAG, "replace new data");
-        if (player != null && player.isPlaying()) {
-            MediaItem newMetadataItem = new MediaItem.Builder()
-                    .setMediaId("stream-1")
-                    .setUri(Constants.GR_STREAM_URL)
-                    .setMediaMetadata(new MediaMetadata.Builder()
-                            .setTitle(dataModel.getTitle().getValue())
-                            .setArtist(dataModel.getArtist().getValue())
-                            .setArtworkUri(Uri.parse(dataModel.getCoverUrl().getValue()))
-                            .build())
-                    .build();
-            player.replaceMediaItem(player.getCurrentMediaItemIndex(), newMetadataItem);
-        }
-    }
-
-    private void initExoPlayer() {
-        player = new ExoPlayer.Builder(this)
-                .setAudioAttributes(AudioAttributes.DEFAULT, true)
-                .build();
-        streamItem = new MediaItem.Builder()
+    private MediaItem updateMetadataInfo() {
+        String title = dataModel.getTitle().getValue();
+        String artist = dataModel.getArtist().getValue();
+        String uri = dataModel.getCoverUrl().getValue();
+        return new MediaItem.Builder()
                 .setMediaId("stream-1")
                 .setUri(Constants.GR_STREAM_URL)
+                .setMediaMetadata(new MediaMetadata.Builder()
+                        .setTitle(title == null ? "null" : title)
+                        .setArtist(artist == null ? "null" : artist)
+                        .setArtworkUri(uri == null ? null : Uri.parse(uri))
+                        .build())
                 .build();
-        player.setMediaItem(streamItem);
-        player.setPlayWhenReady(false);
-        player.prepare();
-        player.addListener(playerListener);
     }
 
     public void playAndPauseStream() {
-        if (player != null && player.isPlaying()) {
-            player.pause();
-            releaseExoPlayer();
+        if (session.getPlayer().isPlaying()) {
+            session.getPlayer().pause();
             Toast.makeText(this, R.string.stream_stop_toast, Toast.LENGTH_SHORT).show();
         } else {
-            initExoPlayer();
-            player.play();
+            session.getPlayer().play();
             Toast.makeText(this, R.string.stream_resume_toast, Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
-    public IBinder onBind(Intent intent) {
-        super.onBind(intent);
-        return binder;
-    }
-
-    @Override
     public void onDestroy() {
-        super.onDestroy();
-        releaseExoPlayer();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        session.getPlayer().release();
         session.release();
         session = null;
+        super.onDestroy();
     }
-
-    private void releaseExoPlayer() {
-        if (player != null) {
-            player.release();
-            player = null;
-        }
-    }
-
 
 }
