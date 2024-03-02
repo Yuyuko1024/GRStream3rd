@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
@@ -18,6 +19,7 @@ import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.session.DefaultMediaNotificationProvider;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
 
@@ -48,13 +50,13 @@ public class GRStreamPlayerService extends MediaSessionService {
             Player.Listener.super.onPlaybackStateChanged(playbackState);
             switch (playbackState) {
                 case Player.STATE_IDLE:
-                    dataModel. getBufferingState().postValue(0);
+                    dataModel.getBufferingState().postValue(0);
                     break;
                 case Player.STATE_BUFFERING:
-                    dataModel. getBufferingState().postValue(1);
+                    dataModel.getBufferingState().postValue(1);
                     break;
                 case Player.STATE_READY:
-                    dataModel. getBufferingState().postValue(2);
+                    dataModel.getBufferingState().postValue(2);
                 default:
                     break;
             }
@@ -87,6 +89,7 @@ public class GRStreamPlayerService extends MediaSessionService {
         registerBroadcasrReceiver();
         if (player == null) {
             initExoPlayer();
+            setMediaNotificationProvider(new DefaultMediaNotificationProvider(this));
             session = new MediaSession.Builder(this, player)
                     .setSessionActivity(getSingleTopActivity())
                     .build();
@@ -136,6 +139,7 @@ public class GRStreamPlayerService extends MediaSessionService {
                     .setMediaMetadata(new MediaMetadata.Builder()
                             .setTitle(dataModel.getTitle().getValue())
                             .setArtist(dataModel.getArtist().getValue())
+                            .setArtworkUri(Uri.parse(dataModel.getCoverUrl().getValue()))
                             .build())
                     .build();
             player.replaceMediaItem(player.getCurrentMediaItemIndex(), newMetadataItem);
