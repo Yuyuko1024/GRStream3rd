@@ -32,6 +32,9 @@ import android.view.View;
 import androidx.core.content.ContextCompat;
 
 import net.hearnsoft.gensokyoradio.trd.R;
+import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
+import net.hearnsoft.gensokyoradio.trd.utils.Constants;
+import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 
 public class VisualizerView extends View {
     private static final String TAG = VisualizerView.class.getSimpleName();
@@ -55,6 +58,8 @@ public class VisualizerView extends View {
     private boolean mDisplaying = false; // the state we're animating to
 
     private int mColor;
+
+    private int audioSessionId;
 
     private final Visualizer.OnDataCaptureListener mVisualizerListener =
             new Visualizer.OnDataCaptureListener() {
@@ -91,7 +96,7 @@ public class VisualizerView extends View {
         @Override
         public void run() {
             try {
-                mVisualizer = new Visualizer(0);
+                mVisualizer = new Visualizer(audioSessionId);
             } catch (Exception e) {
                 Log.e(TAG, "error initializing visualizer", e);
                 return;
@@ -123,16 +128,18 @@ public class VisualizerView extends View {
         }
     };
 
-    public VisualizerView(Context context, AttributeSet attrs, int defStyle) {
+    public VisualizerView(Context context, AttributeSet attrs, int defStyle, int audioSessionId) {
         super(context, attrs, defStyle);
+        this.audioSessionId = audioSessionId;
+        Log.d(TAG, String.valueOf(audioSessionId));
     }
 
-    public VisualizerView(Context context, AttributeSet attrs) {
-        this(context, attrs, 0);
+    public VisualizerView(Context context, AttributeSet attrs, int audioSessionId) {
+        this(context, attrs, 0, audioSessionId);
     }
 
-    public VisualizerView(Context context) {
-        this(context, null, 0);
+    public VisualizerView(Context context, int audioSessionId) {
+        this(context, null, 0, audioSessionId);
     }
 
     @Override
