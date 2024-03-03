@@ -12,4 +12,6 @@ public class Constants {
 
     public static final String GR_STREAM_URL_EU1 = "http://eu1.stream.gensokyoradio.net:8000/1/";
 
+    public static final String PREF_GLOBAL_NAME = "gr_3rd";
+
 }
