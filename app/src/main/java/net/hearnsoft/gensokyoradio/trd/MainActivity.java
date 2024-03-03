@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         }
         setContentView(binding.getRoot());
         WebSocketService.setCallback(this);
-        sharedPreferences = getSharedPreferences("ws", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(Constants.PREF_GLOBAL_NAME, Context.MODE_PRIVATE);
         binding.play.setEnabled(false);
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
