@@ -253,13 +253,15 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
             timer.cancel();
         }
         isUpdateProgress = true;
-        Log.d(TAG, "showProgress: " + played + " " + duration + " " + remaining);
+        if (BuildConfig.DEBUG) Log.d(TAG, "showProgress: " + played + " " + duration + " " + remaining);
         binding.seekBar.setMax(duration);
         binding.totalTime.post(() -> {
             binding.totalTime.setText(formatTime(duration));
         });
 
-        timer = new Timer();
+        if (timer == null) {
+            timer = new Timer();
+        }
         timer.schedule(new TimerTask() {
             int playedSec = played;
             @Override
