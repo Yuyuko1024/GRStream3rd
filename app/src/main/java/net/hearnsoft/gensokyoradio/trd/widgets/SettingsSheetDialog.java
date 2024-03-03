@@ -95,7 +95,10 @@ public class SettingsSheetDialog extends BottomSheetDialogFragment {
         editServerBinding.serverDefault.setOnClickListener(v -> writeIntSettings("server", 0));
         editServerBinding.serverMobile.setOnClickListener(v -> writeIntSettings("server", 1));
         editServerBinding.serverEnhanced.setOnClickListener(v -> writeIntSettings("server", 2));
-        editServerBinding.serverCustom.setOnClickListener(v -> writeIntSettings("server", 3));
+        editServerBinding.serverCustom.setOnClickListener(v -> {
+            editServerBinding.serverUrlInput.setEnabled(true);
+            writeIntSettings("server", 3);
+        });
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle(R.string.settings_edit_server_title)
                 .setView(editServerBinding.getRoot())
