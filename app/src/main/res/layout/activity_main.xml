@@ -110,7 +110,7 @@
                     android:layout_gravity="center_vertical"
                     android:id="@+id/song_info_btn"
                     android:background="?android:attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_info"/>
+                    android:src="@drawable/ic_more_info_alt"/>
 
             </LinearLayout>
 
