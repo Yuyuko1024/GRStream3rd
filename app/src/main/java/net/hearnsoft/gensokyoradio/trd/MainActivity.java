@@ -242,7 +242,7 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         Log.d(TAG, "beanReceived: " + bean.getSongId() + " " + bean.getTitle());
         runOnUiThread(() -> {
             binding.title.setText(bean.getTitle());
-            binding.artist.setText(bean.getArtist() + " - " + bean.getAlbum());
+            binding.artist.setText(bean.getArtist());
             Glide.with(this).load(bean.getAlbumArt()).placeholder(R.drawable.ic_album).into(binding.cover);
             showProgress(bean.getPlayed()+1, bean.getDuration(), bean.getRemaining()-1);
             Toast.makeText(MainActivity.this, "WebSocket Client ID: " +
