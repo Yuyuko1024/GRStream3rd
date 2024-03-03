@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         Log.d("MainActivity", "onResume: ");
         if (isUiPaused && Boolean.TRUE.equals(songDataModel.getIsUpdatedInfo().getValue())) {
             binding.title.setText(songDataModel.getTitle().getValue());
-            binding.artist.setText(songDataModel.getArtist().getValue() + " - " + songDataModel.getAlbum().getValue());
+            binding.artist.setText(songDataModel.getArtist().getValue());
             Glide.with(this).load(songDataModel.getCoverUrl().getValue()).placeholder(R.drawable.ic_album).into(binding.cover);
             isUiPaused = false;
             songDataModel.getIsUpdatedInfo().postValue(false);
