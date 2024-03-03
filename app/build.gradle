@@ -1,3 +1,5 @@
+import java.text.SimpleDateFormat
+
 plugins {
     id 'com.android.application'
 }
@@ -6,12 +8,16 @@ android {
     namespace 'net.hearnsoft.gensokyoradio.trd'
     compileSdk 34
 
+    def buildSerial = new SimpleDateFormat("MMddHHmm").format(new Date())
+    def versionMajor = 1
+    def versionMinor = 0
+
     defaultConfig {
         applicationId "net.hearnsoft.gensokyoradio.trd"
         minSdk 26
         targetSdk 34
         versionCode 1
-        versionName "1.0"
+        versionName "${versionMajor}.${versionMinor}-${buildSerial}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
