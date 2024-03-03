@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
+import androidx.media3.common.util.Util;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.session.DefaultMediaNotificationProvider;
 import androidx.media3.session.MediaSession;
@@ -25,6 +27,7 @@ import net.hearnsoft.gensokyoradio.trd.BuildConfig;
 import net.hearnsoft.gensokyoradio.trd.MainActivity;
 import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
+import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 
@@ -83,9 +86,13 @@ public class GRStreamPlayerService extends MediaSessionService {
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(receiver, new IntentFilter("net.hearnsoft.gensokyoradio.trd.UPDATE_NOTIFICATION"));
         setMediaNotificationProvider(new DefaultMediaNotificationProvider.Builder(this).build());
-        session = new MediaSession.Builder(this, new ExoPlayer.Builder(this)
+
+        ExoPlayer player = new ExoPlayer.Builder(this)
                 .setAudioAttributes(AudioAttributes.DEFAULT, true)
-                .build())
+                .build();
+        player.setAudioSessionId(AudioSessionManager.getInstance().getAudioSessionId());
+
+        session = new MediaSession.Builder(this, player)
                 .setSessionActivity(getSingleTopActivity())
                 .build();
         session.getPlayer().setMediaItem(updateMetadataInfo());
@@ -133,16 +140,6 @@ public class GRStreamPlayerService extends MediaSessionService {
                         .setArtworkUri(uri == null ? null : Uri.parse(uri))
                         .build())
                 .build();
-    }
-
-    public void playAndPauseStream() {
-        if (session.getPlayer().isPlaying()) {
-            session.getPlayer().pause();
-            Toast.makeText(this, R.string.stream_stop_toast, Toast.LENGTH_SHORT).show();
-        } else {
-            session.getPlayer().play();
-            Toast.makeText(this, R.string.stream_resume_toast, Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override

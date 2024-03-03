@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.lifecycle.Observer;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
@@ -41,6 +42,7 @@ import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.service.GRStreamPlayerService;
 import net.hearnsoft.gensokyoradio.trd.service.WebSocketService;
 import net.hearnsoft.gensokyoradio.trd.service.WsServiceInterface;
+import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.widgets.VisualizerView;
@@ -92,15 +94,15 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         super.onCreate(savedInstanceState);
         //Debug.startMethodTracing("app_trace");
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        if (requestPermissions()) {
-            initVisualizer();
-        }
         setContentView(binding.getRoot());
         WebSocketService.setCallback(this);
         sharedPreferences = getSharedPreferences(Constants.PREF_GLOBAL_NAME, Context.MODE_PRIVATE);
         binding.play.setEnabled(false);
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
+        if (requestPermissions()) {
+            initVisualizer();
+        }
         binding.songInfoBtn.setOnClickListener(v -> {
             CompletableFuture<Boolean> future = getNowPlaying();
             Toast.makeText(this, R.string.fetch_song_data_toast, Toast.LENGTH_SHORT).show();
@@ -184,7 +186,8 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
 
     private void initVisualizer() {
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO ) == PackageManager.PERMISSION_GRANTED) {
-            visualizerView = new VisualizerView(this);
+            int audioSessionId = AudioSessionManager.getInstance().getAudioSessionId();
+            visualizerView = new VisualizerView(this, audioSessionId);
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             params.gravity = Gravity.BOTTOM;
             binding.container.addView(visualizerView, 0, params);
