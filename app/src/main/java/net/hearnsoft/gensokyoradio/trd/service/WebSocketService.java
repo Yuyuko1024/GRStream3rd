@@ -54,7 +54,7 @@ public class WebSocketService extends Service {
     public void onCreate() {
         super.onCreate();
         uri = URI.create(Constants.WS_URL);
-        SharedPreferences sharedPreferences = getSharedPreferences("ws", MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREF_GLOBAL_NAME, MODE_PRIVATE);
         spEditor = sharedPreferences.edit();
         toastHandler = new Handler(Looper.getMainLooper());
         // 获取全局ViewModel
