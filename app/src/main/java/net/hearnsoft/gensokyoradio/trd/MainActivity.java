@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -40,6 +41,7 @@ import net.hearnsoft.gensokyoradio.trd.beans.NowPlayingBean;
 import net.hearnsoft.gensokyoradio.trd.beans.SongDataBean;
 import net.hearnsoft.gensokyoradio.trd.databinding.ActivityMainBinding;
 import net.hearnsoft.gensokyoradio.trd.databinding.DialogNoticeBinding;
+import net.hearnsoft.gensokyoradio.trd.databinding.DialogNowPlayingBinding;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.service.GRStreamPlayerService;
 import net.hearnsoft.gensokyoradio.trd.service.WebSocketService;
@@ -78,18 +80,14 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     private boolean visualizerUsable = false;
     private VisualizerView visualizerView;
     private SongDataBean dataBean;
-
+    private String nowPlayingTitle,nowPlayingArtist,nowPlayingAlbum,nowPlayingYears,nowPlayingCircle;
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 1) {
-                new MaterialAlertDialogBuilder(MainActivity.this)
-                        .setTitle(R.string.song_info_title)
-                        .setMessage(msg.obj.toString())
-                        .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
-                        .show();
+                buildNowPlayingDialog();
             }
         }
     };
@@ -113,14 +111,19 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
             Toast.makeText(this, R.string.fetch_song_data_toast, Toast.LENGTH_SHORT).show();
             future.thenAccept(isOK -> {
                 if (isOK) {
-                    Log.d(TAG, "onCreate: " + dataBean.getSongInfo().getTitle());
-                    String info = getString(R.string.song_info, dataBean.getSongInfo().getTitle(),
-                            dataBean.getSongInfo().getArtist(), dataBean.getSongInfo().getAlbum(),
-                            dataBean.getSongInfo().getYear(), dataBean.getSongInfo().getCircle());
-                    Message message = Message.obtain();
-                    message.what = 1;
-                    message.obj = info;
-                    handler.sendMessage(message);
+                    if (BuildConfig.DEBUG)
+                        Log.d(TAG, "onCreate: " + dataBean.getSongInfo().getTitle());
+                    nowPlayingTitle = dataBean.getSongInfo().getTitle() == null ?
+                            "null" : dataBean.getSongInfo().getTitle();
+                    nowPlayingArtist = dataBean.getSongInfo().getArtist() == null ?
+                            "null" : dataBean.getSongInfo().getArtist();
+                    nowPlayingAlbum = dataBean.getSongInfo().getAlbum() == null ?
+                            "null" : dataBean.getSongInfo().getAlbum();
+                    nowPlayingYears = dataBean.getSongInfo().getYear() == null ?
+                            "null" : dataBean.getSongInfo().getYear();
+                    nowPlayingCircle = dataBean.getSongInfo().getCircle() == null ?
+                            "null" : dataBean.getSongInfo().getCircle();
+                    handler.sendEmptyMessage(1);
                 }
             });
         });
@@ -246,6 +249,21 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
                     sharedPreferences.getInt("clientId",0), Toast.LENGTH_SHORT).show();
             binding.play.setEnabled(true);
         });
+    }
+
+    private void buildNowPlayingDialog() {
+        DialogNowPlayingBinding nowPlayingBinding = DialogNowPlayingBinding.inflate(
+                LayoutInflater.from(this), null, false);
+        nowPlayingBinding.infoTitle.setText(nowPlayingTitle);
+        nowPlayingBinding.infoArtist.setText(nowPlayingArtist);
+        nowPlayingBinding.infoAlbum.setText(nowPlayingAlbum);
+        nowPlayingBinding.infoYears.setText(nowPlayingYears);
+        nowPlayingBinding.infoCircle.setText(nowPlayingCircle);
+        new MaterialAlertDialogBuilder(MainActivity.this)
+                .setTitle(R.string.song_info_title)
+                .setView(nowPlayingBinding.getRoot())
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     private void showProgress(int played, int duration, int remaining) {
