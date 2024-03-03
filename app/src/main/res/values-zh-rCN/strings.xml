@@ -21,4 +21,16 @@
     <string name="info_years">年份</string>
     <string name="info_circle">社团</string>
     <string name="info_unknown">未知</string>
+    <string name="settings_socket_client_id_title">终端会话ID</string>
+    <string name="settings_server_using">电台服务器</string>
+    <string name="settings_edit_server_title">修改服务器</string>
+    <string name="menu_settings_title">设置</string>
+    <string name="server_default">默认网页端服务器 （128kbps）</string>
+    <string name="server_mobile">移动端服务器（64kbps）</string>
+    <string name="server_enhanced">增强服务器（256kbps）</string>
+    <string name="server_custom">自定义服务器</string>
+    <string name="settings_saved_toast">设置将会在下次启动或下次元数据更新时应用</string>
+    <string name="status_idle">空闲</string>
+    <string name="status_buffering">正在缓冲</string>
+    <string name="status_ready">就绪</string>
 </resources>

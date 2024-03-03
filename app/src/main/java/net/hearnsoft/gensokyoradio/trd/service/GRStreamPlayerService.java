@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.util.Log;
@@ -131,9 +132,26 @@ public class GRStreamPlayerService extends MediaSessionService {
         String title = dataModel.getTitle().getValue();
         String artist = dataModel.getArtist().getValue();
         String uri = dataModel.getCoverUrl().getValue();
+        SharedPreferences preferences = getSharedPreferences(Constants.PREF_GLOBAL_NAME, Context.MODE_PRIVATE);
+        String media_uri;
+        switch (preferences.getInt("server", 0)) {
+            case 1:
+                media_uri = Constants.GR_STREAM_URL_MOBILE;
+                break;
+            case 2:
+                media_uri = Constants.GR_STREAM_URL_ENHANCED;
+                break;
+            case 3:
+                media_uri = preferences.getString("custom_server", Constants.GR_STREAM_URL_DEFAULT);
+                break;
+            case 0:
+            default:
+                media_uri = Constants.GR_STREAM_URL_DEFAULT;
+                break;
+        }
         return new MediaItem.Builder()
                 .setMediaId("stream-1")
-                .setUri(Constants.GR_STREAM_URL_DEFAULT)
+                .setUri(media_uri)
                 .setMediaMetadata(new MediaMetadata.Builder()
                         .setTitle(title == null ? "null" : title)
                         .setArtist(artist == null ? "null" : artist)

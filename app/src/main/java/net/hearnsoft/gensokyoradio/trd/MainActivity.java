@@ -15,6 +15,9 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -45,6 +48,7 @@ import net.hearnsoft.gensokyoradio.trd.service.WsServiceInterface;
 import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
+import net.hearnsoft.gensokyoradio.trd.widgets.SettingsSheetDialog;
 import net.hearnsoft.gensokyoradio.trd.widgets.VisualizerView;
 
 import java.io.IOException;
@@ -95,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         //Debug.startMethodTracing("app_trace");
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        setSupportActionBar(binding.topAppbar);
         WebSocketService.setCallback(this);
         sharedPreferences = getSharedPreferences(Constants.PREF_GLOBAL_NAME, Context.MODE_PRIVATE);
         binding.play.setEnabled(false);
@@ -139,13 +144,13 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         songDataModel.getBufferingState().observe(this, bufferingState -> {
             switch (bufferingState) {
                 case 0:
-                    binding.bufferState.setText("IDLE");
+                    binding.bufferState.setText(getString(R.string.status_idle));
                     break;
                 case 1:
-                    binding.bufferState.setText("BUFFERING");
+                    binding.bufferState.setText(getString(R.string.status_buffering));
                     break;
                 case 2:
-                    binding.bufferState.setText("READY");
+                    binding.bufferState.setText(getString(R.string.status_ready));
                     break;
             }
         });
@@ -314,6 +319,20 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         }
 
         return minutesStr + ":" + secondsStr;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.menu_settings) {
+            new SettingsSheetDialog(this).show(getSupportFragmentManager(), "settings");
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
