@@ -129,7 +129,7 @@ public class GRStreamPlayerService extends MediaSessionService {
         String uri = dataModel.getCoverUrl().getValue();
         return new MediaItem.Builder()
                 .setMediaId("stream-1")
-                .setUri(Constants.GR_STREAM_URL)
+                .setUri(Constants.GR_STREAM_URL_DEFAULT)
                 .setMediaMetadata(new MediaMetadata.Builder()
                         .setTitle(title == null ? "null" : title)
                         .setArtist(artist == null ? "null" : artist)

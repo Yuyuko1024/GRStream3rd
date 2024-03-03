@@ -8,9 +8,11 @@ public class Constants {
 
     public static final String NOW_PLAYING_JSON = "https://gensokyoradio.net/api/station/playing/";
 
-    public static final String GR_STREAM_URL = "https://stream.gensokyoradio.net/1/";
+    public static final String GR_STREAM_URL_DEFAULT = "https://stream.gensokyoradio.net/1/";
 
     public static final String GR_STREAM_URL_EU1 = "http://eu1.stream.gensokyoradio.net:8000/1/";
+    public static final String GR_STREAM_URL_MOBILE = "https://stream.gensokyoradio.net/2";
+    public static final String GR_STREAM_URL_ENHANCED = "https://stream.gensokyoradio.net/3";
 
     public static final String PREF_GLOBAL_NAME = "gr_3rd";
 
