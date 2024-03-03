@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
-import android.os.Binder;
-import android.os.Build;
-import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
