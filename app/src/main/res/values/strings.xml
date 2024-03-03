@@ -20,4 +20,16 @@
     <string name="info_years">Years</string>
     <string name="info_circle">Circle</string>
     <string name="info_unknown">Unknown</string>
+    <string name="settings_socket_client_id_title">WebSocket Client ID</string>
+    <string name="settings_server_using">Stream server</string>
+    <string name="settings_edit_server_title">Edit server</string>
+    <string name="menu_settings_title">Settings</string>
+    <string name="server_default">Default web server (128kbps)</string>
+    <string name="server_mobile">Mobile server (64kbps)</string>
+    <string name="server_enhanced">Enhanced server (256kbps)</string>
+    <string name="server_custom">Custom server</string>
+    <string name="settings_saved_toast">Settings will apply at next launch or next metadata update.</string>
+    <string name="status_idle">IDLE</string>
+    <string name="status_buffering">BUFFERING</string>
+    <string name="status_ready">READY</string>
 </resources>
