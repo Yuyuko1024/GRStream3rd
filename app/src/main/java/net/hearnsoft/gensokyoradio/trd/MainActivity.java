@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.lifecycle.Observer;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
@@ -73,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     private SharedPreferences sharedPreferences;
     private boolean isBound = false;
     private boolean isUiPaused = false;
-    private boolean isPlaying = false;
     private boolean isUpdateProgress = false;
     private boolean visualizerUsable = false;
     private VisualizerView visualizerView;
@@ -135,13 +135,6 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
                     throw new RuntimeException(e);
                 }
             }
-            if (isPlaying) {
-                isPlaying = false;
-                binding.play.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_play, getTheme()));
-            } else {
-                isPlaying = true;
-                binding.play.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_pause, getTheme()));
-            }
         });
         songDataModel.getBufferingState().observe(this, bufferingState -> {
             switch (bufferingState) {
@@ -154,6 +147,13 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
                 case 2:
                     binding.bufferState.setText("READY");
                     break;
+            }
+        });
+        songDataModel.getPlayerStatus().observe(this, isPlaying -> {
+            if (isPlaying) {
+                binding.play.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_pause, getTheme()));
+            } else {
+                binding.play.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_play, getTheme()));
             }
         });
         showNoticeDialog();

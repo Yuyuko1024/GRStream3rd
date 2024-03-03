@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import androidx.media3.session.DefaultMediaNotificationProvider;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
 
+import net.hearnsoft.gensokyoradio.trd.BuildConfig;
 import net.hearnsoft.gensokyoradio.trd.MainActivity;
 import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
@@ -51,6 +53,12 @@ public class GRStreamPlayerService extends MediaSessionService {
                 default:
                     break;
             }
+        }
+
+        @Override
+        public void onIsPlayingChanged(boolean isPlaying) {
+            dataModel.getPlayerStatus().postValue(isPlaying);
+            if (BuildConfig.DEBUG) Log.d(TAG, "Player status:" + isPlaying);
         }
     };
 

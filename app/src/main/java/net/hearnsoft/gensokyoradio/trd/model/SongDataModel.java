@@ -58,4 +58,13 @@ public class SongDataModel extends ViewModel {
         return bufferingState;
     }
 
+    private MutableLiveData<Boolean> playerStatus;
+    public MutableLiveData<Boolean> getPlayerStatus() {
+        if (playerStatus == null) {
+            playerStatus = new MutableLiveData<>();
+            playerStatus.postValue(false);
+        }
+        return playerStatus;
+    }
+
 }
