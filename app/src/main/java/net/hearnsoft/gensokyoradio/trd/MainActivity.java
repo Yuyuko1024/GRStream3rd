@@ -277,9 +277,8 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
             binding.totalTime.setText(formatTime(duration));
         });
 
-        if (timer == null) {
-            timer = new Timer();
-        }
+        //始终创建新的Timer
+        timer = new Timer();
         timer.schedule(new TimerTask() {
             int playedSec = played;
             @Override
