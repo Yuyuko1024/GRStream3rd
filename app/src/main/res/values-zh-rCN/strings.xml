@@ -15,4 +15,10 @@
         年份: <xliff:g id="year">%s</xliff:g>\n
         社团: <xliff:g id="circle">%s</xliff:g>
     </string>
+    <string name="info_title">标题</string>
+    <string name="info_artist">编曲/演唱</string>
+    <string name="info_album">专辑</string>
+    <string name="info_years">年份</string>
+    <string name="info_circle">社团</string>
+    <string name="info_unknown">未知</string>
 </resources>

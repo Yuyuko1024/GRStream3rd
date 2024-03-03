@@ -14,4 +14,10 @@
         Year: <xliff:g id="year">%s</xliff:g>\n
         Circle: <xliff:g id="circle">%s</xliff:g>
     </string>
+    <string name="info_title">Title</string>
+    <string name="info_artist">Artist</string>
+    <string name="info_album">Album</string>
+    <string name="info_years">Years</string>
+    <string name="info_circle">Circle</string>
+    <string name="info_unknown">Unknown</string>
 </resources>
