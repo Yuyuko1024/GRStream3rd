@@ -32,28 +32,30 @@
             </com.google.android.material.appbar.AppBarLayout>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
             android:orientation="vertical">
 
             <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="26dp"
-                android:layout_marginEnd="26dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="16dp"
                 android:id="@+id/cover_container"
                 app:cardElevation="16dp"
-                app:cardCornerRadius="16dp">
+                app:cardCornerRadius="16dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:strokeWidth="0dp">
                 <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:scaleType="centerCrop"
                     android:layout_gravity="center_vertical"
-                    android:adjustViewBounds="true"
                     android:foreground="?android:attr/selectableItemBackground"
                     android:clickable="true"
                     android:id="@+id/cover"
@@ -68,7 +70,11 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:orientation="horizontal">
+                android:id="@+id/ui_info_bar"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cover_container">
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -115,7 +121,11 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:id="@+id/ui_progress_status"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ui_info_bar">
                 <ProgressBar
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -164,9 +174,12 @@
                 android:layout_margin="16dp"
                 android:id="@+id/play"
                 style="@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Surface"
-                app:icon="@drawable/ic_play" />
+                app:icon="@drawable/ic_play"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ui_progress_status"/>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
 
