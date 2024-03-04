@@ -13,24 +13,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/coor"
+            android:id="@+id/appBar"
             android:background="@android:color/transparent">
-            <com.google.android.material.appbar.AppBarLayout
+            <com.google.android.material.appbar.MaterialToolbar
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent">
-                <com.google.android.material.appbar.MaterialToolbar
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    android:id="@+id/top_appbar"
-                    android:background="@android:color/transparent"
-                    app:title="@string/app_name"
-                    app:titleCentered="false" />
-            </com.google.android.material.appbar.AppBarLayout>
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
+                android:layout_height="?attr/actionBarSize"
+                android:id="@+id/top_appbar"
+                android:background="@android:color/transparent"
+                app:title="@string/app_name"
+                app:titleCentered="false" />
+        </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
