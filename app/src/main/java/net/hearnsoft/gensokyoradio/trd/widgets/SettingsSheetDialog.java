@@ -74,10 +74,12 @@ public class SettingsSheetDialog extends BottomSheetDialogFragment {
 
     private void editServer() {
         SettingsEditServerBinding editServerBinding = SettingsEditServerBinding.inflate(getLayoutInflater());
-        if (preferences.getInt("server", 0) == 3) {
+        int server_settings = getIntPref("server");
+        if (server_settings == 3) {
             editServerBinding.serverUrlInput.setEnabled(true);
+            editServerBinding.serverUrlInput.setText(getStringPref("custom_server"));
         }
-        switch (preferences.getInt("server", 0)) {
+        switch (server_settings) {
             case 1:
                 editServerBinding.serverMobile.setChecked(true);
                 break;
@@ -97,6 +99,7 @@ public class SettingsSheetDialog extends BottomSheetDialogFragment {
         editServerBinding.serverEnhanced.setOnClickListener(v -> writeIntSettings("server", 2));
         editServerBinding.serverCustom.setOnClickListener(v -> {
             editServerBinding.serverUrlInput.setEnabled(true);
+            editServerBinding.serverUrlInput.setText(getStringPref("custom_server"));
             writeIntSettings("server", 3);
         });
         new MaterialAlertDialogBuilder(requireContext())
@@ -104,9 +107,9 @@ public class SettingsSheetDialog extends BottomSheetDialogFragment {
                 .setView(editServerBinding.getRoot())
                 .setCancelable(false)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    if (preferences.getInt("server", 0) == 3 &&
+                    if (getIntPref("server") == 3 &&
                             !TextUtils.isEmpty(editServerBinding.serverUrlInput.getEditableText().toString())) {
-                        writeStringSettings("custom_server", "");
+                        writeStringSettings("custom_server", editServerBinding.serverUrlInput.getEditableText().toString());
                     }
                     Toast.makeText(requireContext(), R.string.settings_saved_toast, Toast.LENGTH_SHORT).show();
                 })
@@ -121,6 +124,14 @@ public class SettingsSheetDialog extends BottomSheetDialogFragment {
     private void writeStringSettings(String key, String value) {
         editor.putString(key, value);
         editor.apply();
+    }
+
+    private String getStringPref(String key) {
+        return preferences.getString(key, "");
+    }
+
+    private int getIntPref(String key) {
+        return preferences.getInt(key, 0);
     }
 
     @Override
