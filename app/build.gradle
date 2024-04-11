@@ -44,8 +44,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    // Google ExoPlayer
-    // implementation 'com.google.android.exoplayer:exoplayer:2.18.7'
     // Java WebSocket
     implementation 'org.java-websocket:Java-WebSocket:1.5.3'
     // Google Gson
