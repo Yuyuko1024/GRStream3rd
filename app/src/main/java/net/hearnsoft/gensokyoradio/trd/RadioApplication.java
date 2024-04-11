@@ -3,6 +3,7 @@ package net.hearnsoft.gensokyoradio.trd;
 import android.app.Application;
 import android.util.Log;
 
+import net.hearnsoft.gensokyoradio.trd.db.SongHistoryDbHelper;
 import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
 
 public class RadioApplication extends Application {
@@ -16,5 +17,6 @@ public class RadioApplication extends Application {
         AudioSessionManager.getInstance().generateAudioSessionId(this.getApplicationContext());
         if (BuildConfig.DEBUG) Log.d(TAG, "generated audio session id="+
                 AudioSessionManager.getInstance().getAudioSessionId());
+        SongHistoryDbHelper.getInstance(this);
     }
 }

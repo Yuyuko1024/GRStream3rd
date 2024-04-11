@@ -1,6 +1,7 @@
 package net.hearnsoft.gensokyoradio.trd.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -18,6 +19,7 @@ import com.google.gson.JsonParser;
 
 import net.hearnsoft.gensokyoradio.trd.beans.NowPlayingBean;
 import net.hearnsoft.gensokyoradio.trd.beans.SocketClientBeans;
+import net.hearnsoft.gensokyoradio.trd.db.SongHistoryDbHelper;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.NullStringToEmptyAdapterFactory;
@@ -227,6 +229,16 @@ public class WebSocketService extends Service {
                 .create();
         NowPlayingBean bean = gson.fromJson(jsonData, NowPlayingBean.class);
         wsInterface.beanReceived(bean);
+        long rowId = SongHistoryDbHelper.getInstance(this).insertSong(
+                bean.getSongId(),
+                bean.getTitle(),
+                bean.getArtist(),
+                bean.getAlbum(),
+                bean.getCircle(),
+                bean.getAlbumArt(),
+                bean.getAlbumid()
+        );
+        Log.d(TAG, "record history row id "+ rowId);
 
         //genMediaNotification(bean);
         setViewModelData(bean);

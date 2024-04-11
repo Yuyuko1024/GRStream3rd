@@ -11,6 +11,7 @@ public class NowPlayingBean {
     private String year;
     private int played;
     private int remaining;
+    private int albumid;
 
     public int getSongId() {
         return songid;
@@ -90,5 +91,13 @@ public class NowPlayingBean {
 
     public void setRemaining(int remaining) {
         this.remaining = remaining;
+    }
+
+    public int getAlbumid() {
+        return albumid;
+    }
+
+    public void setAlbumid(int albumid) {
+        this.albumid = albumid;
     }
 }

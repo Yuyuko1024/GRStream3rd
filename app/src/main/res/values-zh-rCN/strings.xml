@@ -26,4 +26,13 @@
     <string name="status_idle">空闲</string>
     <string name="status_buffering">正在缓冲</string>
     <string name="status_ready">就绪</string>
+    <string name="song_history_title">播放历史记录</string>
+    <string name="datetime_format">yyyy年MM月dd日 HH:mm</string>
+    <string name="item_str_circle">社团：<xliff:g id="circle">%s</xliff:g></string>
+    <string name="item_str_artists">编曲/演唱：<xliff:g id="artists">%s</xliff:g></string>
+    <string name="item_str_album">专辑：<xliff:g id="album">%s</xliff:g></string>
+    <string name="clear_history_text">清空历史记录</string>
+    <string name="no_data_hint">这里什么都没有，就像⑨的脑袋一样。</string>
+    <string name="clear_history_msg">确认清空历史记录？</string>
+    <string name="history_cleared_toast">历史记录已清空</string>
 </resources>
