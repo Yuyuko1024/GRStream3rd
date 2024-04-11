@@ -25,4 +25,13 @@
     <string name="status_idle">IDLE</string>
     <string name="status_buffering">BUFFERING</string>
     <string name="status_ready">READY</string>
+    <string name="song_history_title">Song History</string>
+    <string name="datetime_format">MM/dd/yyyy  HH:mm</string>
+    <string name="item_str_circle">Circle：<xliff:g id="circle">%s</xliff:g></string>
+    <string name="item_str_artists">Artists：<xliff:g id="artists">%s</xliff:g></string>
+    <string name="item_str_album">Album：<xliff:g id="album">%s</xliff:g></string>
+    <string name="clear_history_text">Clear history</string>
+    <string name="no_data_hint">No data</string>
+    <string name="clear_history_msg">Are you sure?</string>
+    <string name="history_cleared_toast">History has been cleared.</string>
 </resources>

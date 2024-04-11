@@ -341,6 +341,9 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_settings) {
             new SettingsSheetDialog(this).show(getSupportFragmentManager(), "settings");
+        } else if (item.getItemId() == R.id.menu_history) {
+            Intent intent = new Intent(this, SongHistoryActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
