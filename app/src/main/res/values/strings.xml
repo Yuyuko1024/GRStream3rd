@@ -1,19 +1,12 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Gensokyo Radio 3rd Eyes</string>
-    <string name="dialog_notice_message">As you can see, this is a Fan-made third-party Gensokyo Radio client. A simple radio client using Material Design 3 components and ExoPlayer supports some of the latest Android features. However, it only supports streaming up to 256kbps mp3 streams. If you want to support Gensokyo Radio, please click the badge below to go to Google Play and download the full version of the official App to enjoy higher quality streaming media and more features!</string>
+    <string name="dialog_notice_message">As you can see, this is a Fan-made third-party Gensokyo Radio client. A simple radio client using Material Design 3 components and AndroidX Media 3 supports some of the latest Android features. However, it only supports streaming up to 256kbps mp3 streams. If you want to support Gensokyo Radio, please click the badge below to go to Google Play and download the full version of the official App to enjoy higher quality streaming media and more features!</string>
     <string name="play_badge_content_desc">Get Full version App on Google Play</string>
     <string name="fetch_song_data_toast">Fetching song info…</string>
     <string name="notice_titie">Notice</string>
     <string name="stream_resume_toast">Play stream resume.</string>
     <string name="stream_stop_toast">Play stream stop.</string>
     <string name="song_info_title">Song Info</string>
-    <string name="song_info">
-        Title: <xliff:g id="title">%s</xliff:g>\n
-        Artist: <xliff:g id="artist">%s</xliff:g>\n
-        Album:  <xliff:g id="album">%s</xliff:g>\n
-        Year: <xliff:g id="year">%s</xliff:g>\n
-        Circle: <xliff:g id="circle">%s</xliff:g>
-    </string>
     <string name="info_title">Title</string>
     <string name="info_artist">Artist</string>
     <string name="info_album">Album</string>
