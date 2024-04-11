@@ -1,8 +1,6 @@
 package net.hearnsoft.gensokyoradio.trd;
 
 import android.app.Application;
-import android.content.Context;
-import android.media.AudioManager;
 import android.util.Log;
 
 import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;

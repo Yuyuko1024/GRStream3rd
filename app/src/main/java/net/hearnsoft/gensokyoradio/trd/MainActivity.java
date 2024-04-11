@@ -1,6 +1,7 @@
 package net.hearnsoft.gensokyoradio.trd;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,11 +18,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowInsets;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,7 +27,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
-import androidx.core.view.OnApplyWindowInsetsListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -37,7 +34,6 @@ import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
@@ -275,11 +271,12 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         nowPlayingBinding.infoAlbum.setText(nowPlayingAlbum);
         nowPlayingBinding.infoYears.setText(nowPlayingYears);
         nowPlayingBinding.infoCircle.setText(nowPlayingCircle);
-        new MaterialAlertDialogBuilder(MainActivity.this)
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this)
                 .setTitle(R.string.song_info_title)
                 .setView(nowPlayingBinding.getRoot())
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
-                .show();
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss());
+        Dialog dialog = builder.create();
+        dialog.show();
     }
 
     private void showProgress(int played, int duration, int remaining) {
