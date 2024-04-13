@@ -24,6 +24,11 @@
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:id="@+id/history_list"/>
+        android:id="@+id/history_list"
+        app:fastScrollEnabled="true"
+        app:fastScrollHorizontalTrackDrawable="@drawable/fastscroll_line_drawable"
+        app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable"
+        app:fastScrollVerticalTrackDrawable="@drawable/fastscroll_line_drawable"
+        app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable"/>
 
 </LinearLayout>
