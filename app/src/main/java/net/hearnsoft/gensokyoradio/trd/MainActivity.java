@@ -49,6 +49,7 @@ import net.hearnsoft.gensokyoradio.trd.service.GRStreamPlayerService;
 import net.hearnsoft.gensokyoradio.trd.service.WebSocketService;
 import net.hearnsoft.gensokyoradio.trd.service.WsServiceInterface;
 import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
+import net.hearnsoft.gensokyoradio.trd.utils.CarUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.widgets.SettingsSheetDialog;
@@ -108,7 +109,13 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         //设置View top padding
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
             Insets statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars());
-            v.setPadding(0, statusBar.top, 0, 0);
+            if (CarUtils.isAutomotiveOS(this)) {
+                Log.d(TAG, "is Automotive OS");
+                Insets nav = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(0, statusBar.top, 0, nav.top);
+            } else {
+                v.setPadding(0, statusBar.top, 0, 0);
+            }
             return insets;
         });
         WebSocketService.setCallback(this);
@@ -360,7 +367,10 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         if (isUiPaused && Boolean.TRUE.equals(songDataModel.getIsUpdatedInfo().getValue())) {
             binding.title.setText(songDataModel.getTitle().getValue());
             binding.artist.setText(songDataModel.getArtist().getValue());
-            Glide.with(this).load(songDataModel.getCoverUrl().getValue()).placeholder(R.drawable.ic_album).into(binding.cover);
+            Glide.with(this)
+                    .load(songDataModel.getCoverUrl().getValue())
+                    .placeholder(R.drawable.ic_album)
+                    .into(binding.cover);
             isUiPaused = false;
             songDataModel.getIsUpdatedInfo().postValue(false);
         }
