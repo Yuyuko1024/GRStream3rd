@@ -3,6 +3,7 @@ package net.hearnsoft.gensokyoradio.trd;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import net.hearnsoft.gensokyoradio.trd.beans.SongHistoryBean;
 import net.hearnsoft.gensokyoradio.trd.databinding.ActivitySongHistoryBinding;
 import net.hearnsoft.gensokyoradio.trd.db.SongHistoryDbHelper;
+import net.hearnsoft.gensokyoradio.trd.utils.CarUtils;
 import net.hearnsoft.gensokyoradio.trd.widgets.EmptyDataAdapter;
 import net.hearnsoft.gensokyoradio.trd.widgets.SongHistoryAdapter;
 
@@ -48,7 +50,12 @@ public class SongHistoryActivity extends AppCompatActivity {
         //设置View top padding
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
             Insets statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars());
-            v.setPadding(0, statusBar.top, 0, 0);
+            if (CarUtils.isAutomotiveOS(this)) {
+                Insets nav = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                v.setPadding(0, statusBar.top, 0, nav.top);
+            } else {
+                v.setPadding(0, statusBar.top, 0, 0);
+            }
             return insets;
         });
         binding.historyList.setLayoutManager(new LinearLayoutManager(this));
