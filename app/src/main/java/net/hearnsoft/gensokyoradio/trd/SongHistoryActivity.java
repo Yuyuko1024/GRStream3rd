@@ -47,8 +47,8 @@ public class SongHistoryActivity extends AppCompatActivity {
         }
         //设置View top padding
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
-            Insets cutout = insets.getInsets(WindowInsetsCompat.Type.displayCutout());
-            v.setPadding(0, cutout.top, 0, 0);
+            Insets statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars());
+            v.setPadding(0, statusBar.top, 0, 0);
             return insets;
         });
         binding.historyList.setLayoutManager(new LinearLayoutManager(this));
