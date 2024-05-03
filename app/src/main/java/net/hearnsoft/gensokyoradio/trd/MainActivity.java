@@ -31,6 +31,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.Observer;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
@@ -53,6 +54,7 @@ import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
 import net.hearnsoft.gensokyoradio.trd.utils.CarUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.GlobalTimer;
+import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.TimerUpdateListener;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.widgets.SettingsSheetDialog;
@@ -69,11 +71,14 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import pub.devrel.easypermissions.EasyPermissions;
 
 
 public class MainActivity extends AppCompatActivity
         implements WsServiceInterface, TimerUpdateListener {
     private static final String TAG = MainActivity.class.getSimpleName();
+    // requestCode
+    public static final int RC_PERM_DEFAULT = 1;
     private final ExecutorService signalThreadPool = Executors.newSingleThreadExecutor();
     private ActivityMainBinding binding;
     private SongDataModel songDataModel;
@@ -134,9 +139,8 @@ public class MainActivity extends AppCompatActivity
         binding.play.setEnabled(false);
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
-        if (requestPermissions()) {
-            initVisualizer();
-        }
+        requestPermissions();
+        initVisualizer();
         GlobalTimer.getInstance().addListener(this);
         binding.songInfoBtn.setOnClickListener(v -> {
             CompletableFuture<Boolean> future = getNowPlaying();
@@ -194,50 +198,76 @@ public class MainActivity extends AppCompatActivity
         });
         showNoticeDialog();
         startSocketService();
+        songDataModel.getShowVisualizer().observe(this, show -> {
+            if (visualizerView != null) {
+                if (show) {
+                    visualizerView.setPlaying(true);
+                    visualizerView.setVisible(true);
+                    visualizerView.setPowerSaveMode(false);
+                } else {
+                    visualizerView.setPlaying(false);
+                    visualizerView.setVisible(false);
+                    visualizerView.setPowerSaveMode(true);
+                }
+            } else {
+                initVisualizer();
+            }
+        });
         //Debug.stopMethodTracing();
     }
 
-    private boolean requestPermissions() {
+    private void requestPermissions() {
+        String[] perms;
         if (Build.VERSION.SDK_INT >= 33) {
-            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.RECORD_AUDIO ) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS,Manifest.permission.RECORD_AUDIO,
-                                    Manifest.permission.READ_PHONE_STATE}, 1);
-                return false;
-            } else {
-                return true;
-            }
+             perms = new String[]{Manifest.permission.POST_NOTIFICATIONS,
+                     Manifest.permission.READ_PHONE_STATE};
         } else {
-            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO ) != PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO,
-                        Manifest.permission.READ_PHONE_STATE}, 1);
-                return false;
-            } else {
-                return true;
+            perms = new String[]{Manifest.permission.READ_PHONE_STATE};
+        }
+        if (!EasyPermissions.hasPermissions(this, perms)) {
+            EasyPermissions.requestPermissions(this, getString(R.string.perm_need_basic),
+                    RC_PERM_DEFAULT, perms);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    private void initVisualizer() {
+        boolean showVisualizer = SettingsPrefUtils.getInstance(this)
+                .readBooleanSettings("visualizer");
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO)
+                == PackageManager.PERMISSION_GRANTED) {
+            if (showVisualizer) {
+                showVisualizer();
+            }
+            songDataModel.getShowVisualizer().postValue(showVisualizer);
+        } else {
+            if (showVisualizer) {
+                SettingsPrefUtils.getInstance(this).writeBooleanSettings("visualizer", false);
             }
         }
     }
 
-    private void initVisualizer() {
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO ) == PackageManager.PERMISSION_GRANTED) {
-            int audioSessionId = AudioSessionManager.getInstance().getAudioSessionId();
-            visualizerView = new VisualizerView(this, audioSessionId);
-            FrameLayout.LayoutParams params =
-                    new FrameLayout.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                    );
-            params.gravity = Gravity.BOTTOM;
-            binding.container.addView(visualizerView, 0, params);
-            visualizerUsable = true;
-            visualizerView.initialize(this);
-            visualizerView.setPlaying(true);
-            visualizerView.setVisible(true);
-            visualizerView.setColor(ContextCompat.getColor(this, R.color.system_accent));
-            visualizerView.setPowerSaveMode(false);
-        }
+    private void showVisualizer() {
+        int audioSessionId = AudioSessionManager.getInstance().getAudioSessionId();
+        visualizerView = new VisualizerView(this, audioSessionId);
+        FrameLayout.LayoutParams params =
+                new FrameLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                );
+        params.gravity = Gravity.BOTTOM;
+        binding.container.addView(visualizerView, 0, params);
+        visualizerUsable = true;
+        visualizerView.initialize(this);
+        visualizerView.setPlaying(true);
+        visualizerView.setVisible(true);
+        visualizerView.setColor(ContextCompat.getColor(this, R.color.system_accent));
+        visualizerView.setPowerSaveMode(false);
     }
 
     private void startSocketService(){
@@ -357,7 +387,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_settings) {
-            new SettingsSheetDialog(this).show(getSupportFragmentManager(), "settings");
+            new SettingsSheetDialog(getApplication(), this)
+                    .show(getSupportFragmentManager(), "settings");
         } else if (item.getItemId() == R.id.menu_history) {
             Intent intent = new Intent(this, SongHistoryActivity.class);
             startActivity(intent);

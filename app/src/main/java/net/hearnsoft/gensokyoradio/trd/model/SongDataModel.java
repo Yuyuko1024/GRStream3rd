@@ -67,4 +67,13 @@ public class SongDataModel extends ViewModel {
         return playerStatus;
     }
 
+    private MutableLiveData<Boolean> showVisualizer;
+    public MutableLiveData<Boolean> getShowVisualizer() {
+        if (showVisualizer == null) {
+            showVisualizer = new MutableLiveData<>();
+            showVisualizer.postValue(false);
+        }
+        return showVisualizer;
+    }
+
 }

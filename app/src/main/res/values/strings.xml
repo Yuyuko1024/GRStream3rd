@@ -16,6 +16,12 @@
     <string name="settings_socket_client_id_title">WebSocket Client ID</string>
     <string name="settings_server_using">Stream server</string>
     <string name="settings_edit_server_title">Edit server</string>
+    <string name="settings_ui_visualizer_title">Visualizer</string>
+    <string name="settings_ui_visualizer_desc">Audio visualization requires the activation of recording permissions to enable internal audio recording functionality within the application.
+        Please be assured that this feature does not in any way compromise your privacy.</string>
+    <string name="perm_need_basic">Need basic permissions.</string>
+    <string name="perm_need_record">Need record permission.</string>
+    <string name="perm_denied_record">Record permission denied.</string>
     <string name="menu_settings_title">Settings</string>
     <string name="server_default">Default web server (128kbps)</string>
     <string name="server_mobile">Mobile server (64kbps)</string>
