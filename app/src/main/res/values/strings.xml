@@ -40,4 +40,7 @@
     <string name="no_data_hint">No data</string>
     <string name="clear_history_msg">Are you sure?</string>
     <string name="history_cleared_toast">History has been cleared.</string>
+    <string name="socket_error_server_msg">ERROR: Got error message from server: \n</string>
+    <string name="socket_error_json_data">ERROR: Wrong JSON data!</string>
+    <string name="socket_error_reconnect">ERROR: Socket connect unexpected, retry count: </string>
 </resources>
