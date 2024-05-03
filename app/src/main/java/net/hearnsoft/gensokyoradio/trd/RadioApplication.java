@@ -5,6 +5,7 @@ import android.util.Log;
 
 import net.hearnsoft.gensokyoradio.trd.db.SongHistoryDbHelper;
 import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
+import net.hearnsoft.gensokyoradio.trd.utils.GlobalTimer;
 
 public class RadioApplication extends Application {
 
@@ -15,8 +16,10 @@ public class RadioApplication extends Application {
         super.onCreate();
         Log.d(TAG, "Init application.");
         AudioSessionManager.getInstance().generateAudioSessionId(this.getApplicationContext());
-        if (BuildConfig.DEBUG) Log.d(TAG, "generated audio session id="+
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "generated audio session id="+
                 AudioSessionManager.getInstance().getAudioSessionId());
+        }
         SongHistoryDbHelper.getInstance(this);
     }
 }

@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -51,6 +52,8 @@ import net.hearnsoft.gensokyoradio.trd.service.WsServiceInterface;
 import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
 import net.hearnsoft.gensokyoradio.trd.utils.CarUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
+import net.hearnsoft.gensokyoradio.trd.utils.GlobalTimer;
+import net.hearnsoft.gensokyoradio.trd.utils.TimerUpdateListener;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.widgets.SettingsSheetDialog;
 import net.hearnsoft.gensokyoradio.trd.widgets.VisualizerView;
@@ -70,7 +73,8 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 
-public class MainActivity extends AppCompatActivity implements WsServiceInterface {
+public class MainActivity extends AppCompatActivity
+        implements WsServiceInterface, TimerUpdateListener {
     private static final String TAG = MainActivity.class.getSimpleName();
     private final ExecutorService signalThreadPool = Executors.newSingleThreadExecutor();
     private ActivityMainBinding binding;
@@ -80,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     private Timer timer;
     private boolean isBound = false;
     private boolean isUiPaused = false;
-    private boolean isUpdateProgress = false;
     private boolean visualizerUsable = false;
     private VisualizerView visualizerView;
     private SongDataBean dataBean;
@@ -137,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         if (requestPermissions()) {
             initVisualizer();
         }
+        GlobalTimer.getInstance().addListener(this);
         binding.songInfoBtn.setOnClickListener(v -> {
             CompletableFuture<Boolean> future = getNowPlaying();
             Toast.makeText(this, R.string.fetch_song_data_toast, Toast.LENGTH_SHORT).show();
@@ -284,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
                     .load(bean.getAlbumArt())
                     .placeholder(R.drawable.ic_album)
                     .into(binding.cover);
-            showProgress(bean.getPlayed()+1, bean.getDuration(), bean.getRemaining()-1);
+            //showProgress();
             binding.play.setEnabled(true);
         });
     }
@@ -305,40 +309,29 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         dialog.show();
     }
 
-    private void showProgress(int played, int duration, int remaining) {
-        if (isUpdateProgress && timer != null) {
-            timer.cancel();
+    @Override
+    public void onTimeUpdate(int duration, int played, int remaining) {
+        if (BuildConfig.DEBUG && !isUiPaused) {
+            Log.d(TAG, "onTimeUpdate: " + played + " " + duration + " " + remaining);
         }
-        isUpdateProgress = true;
-        if (BuildConfig.DEBUG) Log.d(TAG, "showProgress: " + played + " " + duration + " " + remaining);
-        binding.seekBar.setMax(duration);
-        binding.totalTime.post(() -> {
-            binding.totalTime.setText(formatTime(duration));
-        });
-
-        //始终创建新的Timer
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            int playedSec = played;
-            @Override
-            public void run() {
-                if (playedSec == duration) {
-                    timer.cancel();
-                    isUpdateProgress = false;
-                } else {
-                    playedSec++;
-                    binding.seekBar.setProgress(playedSec);
-                    binding.playedTime.post(() -> {
-                        binding.playedTime.setText(formatTime(playedSec));
-                    });
-                }
-            }
-        }, 0, 1000);
+        if (!isUiPaused) {
+            //仅在UI在前台时才进行更新
+            binding.seekBar.setMax(duration);
+            binding.totalTime.post(() -> {
+                binding.totalTime.setText(formatTime(duration));
+            });
+            binding.seekBar.setProgress(played);
+            binding.playedTime.post(() -> {
+                binding.playedTime.setText(formatTime(played));
+            });
+        }
     }
 
     public String formatTime(int seconds) {
-        int minutes = seconds / 60;       // 分钟数
-        int remainingSeconds = seconds % 60;    // 余下秒数
+        // 分钟数
+        int minutes = seconds / 60;
+        // 余下秒数
+        int remainingSeconds = seconds % 60;
 
         String minutesStr;
         if (minutes < 10) {
@@ -383,14 +376,14 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     protected void onResume() {
         super.onResume();
         Log.d("MainActivity", "onResume: ");
-        if (isUiPaused && Boolean.TRUE.equals(songDataModel.getIsUpdatedInfo().getValue())) {
+        isUiPaused = false;
+        if (Boolean.TRUE.equals(songDataModel.getIsUpdatedInfo().getValue())) {
             binding.title.setText(songDataModel.getTitle().getValue());
             binding.artist.setText(songDataModel.getArtist().getValue());
             Glide.with(this)
                     .load(songDataModel.getCoverUrl().getValue())
                     .placeholder(R.drawable.ic_album)
                     .into(binding.cover);
-            isUiPaused = false;
             songDataModel.getIsUpdatedInfo().postValue(false);
         }
         if (visualizerUsable && visualizerView != null) {
@@ -432,9 +425,8 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         } else {
             playerServiceFuture.cancel(true);
         }
-        if (timer != null && isUpdateProgress) {
-            timer.cancel();
-        }
+        GlobalTimer.getInstance().stopTimer();
+        GlobalTimer.getInstance().removeListener(this);
     }
 
     private CompletableFuture<Boolean> getNowPlaying() {
@@ -453,23 +445,28 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 try {
-                    String body = response.body().string();
-                    Gson gson = new GsonBuilder()
-                            .disableHtmlEscaping()
-                            .setLenient()
-                            .serializeNulls()
-                            .setPrettyPrinting()
-                            .enableComplexMapKeySerialization()
-                            .create();
-                    dataBean = gson.fromJson(body, SongDataBean.class);
-                    future.complete(true);
+                    String body = "";
+                    if (response.body() != null) {
+                        body = response.body().string();
+                    }
+                    if (!TextUtils.isEmpty(body)) {
+                        Gson gson = new GsonBuilder()
+                                .disableHtmlEscaping()
+                                .setLenient()
+                                .serializeNulls()
+                                .setPrettyPrinting()
+                                .enableComplexMapKeySerialization()
+                                .create();
+                        dataBean = gson.fromJson(body, SongDataBean.class);
+                        future.complete(true);
+                    }
+                    future.complete(false);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Fetch data error, "+ e);
                     future.complete(false);
                 }
             }
         });
         return future;
     }
-
 }
