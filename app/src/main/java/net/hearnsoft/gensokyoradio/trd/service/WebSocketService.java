@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -47,6 +48,7 @@ public class WebSocketService extends Service {
     private URI uri;
     private int clientId;
     private int recheck = 0;
+    private boolean isRunningService = false;
 
     public static void setCallback(WsServiceInterface dataInterface) {
         wsInterface = dataInterface;
@@ -73,6 +75,13 @@ public class WebSocketService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // only start once
+        if (isRunningService) {
+            Log.e(TAG, "service already running!");
+            return super.onStartCommand(intent, flags, startId);
+        } else {
+            isRunningService = true;
+        }
         signalThreadPool.submit(this::initConn);
         return super.onStartCommand(intent, flags, startId);
     }
@@ -87,6 +96,7 @@ public class WebSocketService extends Service {
         // Service unbind, close WebSocket client
         // Service 解绑，关闭 WebSocket 客户端
         closeWsClient();
+        isRunningService = false;
         return false;
     }
 
@@ -312,6 +322,7 @@ public class WebSocketService extends Service {
     public void onDestroy() {
         super.onDestroy();
         closeWsClient();
+        isRunningService = false;
     }
 
 }
