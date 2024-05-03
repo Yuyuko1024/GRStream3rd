@@ -59,8 +59,6 @@ import net.hearnsoft.gensokyoradio.trd.widgets.SettingsSheetDialog;
 import net.hearnsoft.gensokyoradio.trd.widgets.VisualizerView;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -81,7 +79,6 @@ public class MainActivity extends AppCompatActivity
     private SongDataModel songDataModel;
     private Intent WsIntent;
     private ListenableFuture<MediaController> playerServiceFuture;
-    private Timer timer;
     private boolean isBound = false;
     private boolean isUiPaused = false;
     private boolean visualizerUsable = false;
@@ -146,8 +143,9 @@ public class MainActivity extends AppCompatActivity
             Toast.makeText(this, R.string.fetch_song_data_toast, Toast.LENGTH_SHORT).show();
             future.thenAccept(isOK -> {
                 if (isOK) {
-                    if (BuildConfig.DEBUG)
+                    if (BuildConfig.DEBUG) {
                         Log.d(TAG, "onCreate: " + dataBean.getSongInfo().getTitle());
+                    }
                     nowPlayingTitle = dataBean.getSongInfo().getTitle() == null ?
                             "null" : dataBean.getSongInfo().getTitle();
                     nowPlayingArtist = dataBean.getSongInfo().getArtist() == null ?
