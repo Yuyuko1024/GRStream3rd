@@ -17,6 +17,11 @@
     <string name="settings_socket_client_id_title">终端会话ID</string>
     <string name="settings_server_using">电台服务器</string>
     <string name="settings_edit_server_title">修改服务器</string>
+    <string name="settings_ui_visualizer_title">音频可视化</string>
+    <string name="settings_ui_visualizer_desc">音频可视化需要使用录音权限来进行应用自身内录。放心，该功能不会涉及您的任何隐私。</string>
+    <string name="perm_need_basic">需要基本权限。</string>
+    <string name="perm_need_record">需要录音权限。</string>
+    <string name="perm_denied_record">录音权限被拒绝。</string>
     <string name="menu_settings_title">设置</string>
     <string name="server_default">默认网页端服务器 （128kbps）</string>
     <string name="server_mobile">移动端服务器（64kbps）</string>

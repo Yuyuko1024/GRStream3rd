@@ -25,6 +25,7 @@ import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.GlobalTimer;
 import net.hearnsoft.gensokyoradio.trd.utils.NullStringToEmptyAdapterFactory;
+import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.ws.GRWebSocketClient;
 
@@ -42,7 +43,6 @@ public class WebSocketService extends Service {
     private static WsServiceInterface wsInterface;
     private final ExecutorService signalThreadPool = Executors.newSingleThreadExecutor();
     private GRWebSocketClient wsClient;
-    private SharedPreferences.Editor spEditor;
     private Gson gson;
     private SongDataModel songDataModel;
     private Handler toastHandler;
@@ -60,7 +60,6 @@ public class WebSocketService extends Service {
         super.onCreate();
         uri = URI.create(Constants.WS_URL);
         SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREF_GLOBAL_NAME, MODE_PRIVATE);
-        spEditor = sharedPreferences.edit();
         toastHandler = new Handler(Looper.getMainLooper());
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
@@ -169,8 +168,7 @@ public class WebSocketService extends Service {
                     SocketClientBeans clientBeans = gson.fromJson(message, SocketClientBeans.class);
                     clientId = clientBeans.id;
                     Log.d(TAG, "get Client ID: " + clientId);
-                    spEditor.putInt("clientId", clientId);
-                    spEditor.apply();
+                    SettingsPrefUtils.getInstance(this).writeIntSettings("clientId", clientId);
                 } else if (message.equals("{\"message\":\"ping\"}")) {
                     Log.d(TAG, "get ping! send pong!");
                     sendPong();
@@ -179,10 +177,14 @@ public class WebSocketService extends Service {
                     genBeanData(message);
                 }
             } else if (message.startsWith("Error")) {
-                toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: \n 收到服务器的错误信息: \n" + message, Toast.LENGTH_SHORT).show());
+                toastHandler.post(() ->
+                        Toast.makeText(getApplicationContext(),"ERROR: \n 收到服务器的错误信息: \n"
+                                + message, Toast.LENGTH_SHORT).show());
             } else {
                 Log.e(TAG, "get invalid json data!");
-                toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: 错误json数据!", Toast.LENGTH_SHORT).show());
+                toastHandler.post(() ->
+                        Toast.makeText(getApplicationContext(),"ERROR: 错误json数据!",
+                                Toast.LENGTH_SHORT).show());
             }
         } else {
             Log.e(TAG, "get null data!");

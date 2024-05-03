@@ -30,6 +30,7 @@ import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
+import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 
 public class GRStreamPlayerService extends MediaSessionService {
@@ -138,9 +139,9 @@ public class GRStreamPlayerService extends MediaSessionService {
         String title = dataModel.getTitle().getValue();
         String artist = dataModel.getArtist().getValue();
         String uri = dataModel.getCoverUrl().getValue();
-        SharedPreferences preferences = getSharedPreferences(Constants.PREF_GLOBAL_NAME, Context.MODE_PRIVATE);
         String media_uri;
-        switch (preferences.getInt("server", 0)) {
+        switch (SettingsPrefUtils.getInstance(this)
+                .readIntSettings("server")) {
             case 1:
                 media_uri = Constants.GR_STREAM_URL_MOBILE;
                 break;
@@ -148,7 +149,8 @@ public class GRStreamPlayerService extends MediaSessionService {
                 media_uri = Constants.GR_STREAM_URL_ENHANCED;
                 break;
             case 3:
-                media_uri = preferences.getString("custom_server", Constants.GR_STREAM_URL_DEFAULT);
+                media_uri = SettingsPrefUtils.getInstance(this)
+                        .readStringSettings("custom_server", Constants.GR_STREAM_URL_DEFAULT);
                 break;
             case 0:
             default:
