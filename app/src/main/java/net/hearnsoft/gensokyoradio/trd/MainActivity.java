@@ -3,14 +3,14 @@ package net.hearnsoft.gensokyoradio.trd;
 import android.Manifest;
 import android.app.Dialog;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     private Intent WsIntent;
     private ListenableFuture<MediaController> playerServiceFuture;
     private Timer timer;
-    private SharedPreferences sharedPreferences;
     private boolean isBound = false;
     private boolean isUiPaused = false;
     private boolean isUpdateProgress = false;
@@ -86,8 +85,21 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
     private VisualizerView visualizerView;
     private SongDataBean dataBean;
     private String nowPlayingTitle,nowPlayingArtist,nowPlayingAlbum,nowPlayingYears,nowPlayingCircle;
+    private final ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.d(TAG, "Service bind ready");
+            isBound = true;
+        }
 
-    private Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "Service disconnect ready");
+            isBound = false;
+        }
+    };
+
+    private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -119,7 +131,6 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
             return insets;
         });
         WebSocketService.setCallback(this);
-        sharedPreferences = getSharedPreferences(Constants.PREF_GLOBAL_NAME, Context.MODE_PRIVATE);
         binding.play.setEnabled(false);
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
@@ -211,7 +222,11 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO ) == PackageManager.PERMISSION_GRANTED) {
             int audioSessionId = AudioSessionManager.getInstance().getAudioSessionId();
             visualizerView = new VisualizerView(this, audioSessionId);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            FrameLayout.LayoutParams params =
+                    new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                    );
             params.gravity = Gravity.BOTTOM;
             binding.container.addView(visualizerView, 0, params);
             visualizerUsable = true;
@@ -228,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
             if (!isBound && WsIntent == null) {
                 WsIntent = new Intent(MainActivity.this, WebSocketService.class);
                 startService(WsIntent);
+                bindService(WsIntent, connection, BIND_AUTO_CREATE);
             }
             if (playerServiceFuture == null) {
                 playerServiceFuture = new MediaController.Builder(MainActivity.this,
@@ -264,7 +280,10 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         runOnUiThread(() -> {
             binding.title.setText(bean.getTitle());
             binding.artist.setText(bean.getArtist());
-            Glide.with(this).load(bean.getAlbumArt()).placeholder(R.drawable.ic_album).into(binding.cover);
+            Glide.with(this)
+                    .load(bean.getAlbumArt())
+                    .placeholder(R.drawable.ic_album)
+                    .into(binding.cover);
             showProgress(bean.getPlayed()+1, bean.getDuration(), bean.getRemaining()-1);
             binding.play.setEnabled(true);
         });
@@ -403,6 +422,7 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         super.onDestroy();
         Log.d("MainActivity", "onDestroy: ");
         stopService(WsIntent);
+        unbindService(connection);
         if (playerServiceFuture.isDone() && !playerServiceFuture.isCancelled()) {
             try {
                 playerServiceFuture.get().release();
@@ -412,7 +432,9 @@ public class MainActivity extends AppCompatActivity implements WsServiceInterfac
         } else {
             playerServiceFuture.cancel(true);
         }
-        timer.cancel();
+        if (timer != null && isUpdateProgress) {
+            timer.cancel();
+        }
     }
 
     private CompletableFuture<Boolean> getNowPlaying() {
