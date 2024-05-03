@@ -23,6 +23,7 @@ import net.hearnsoft.gensokyoradio.trd.beans.SocketClientBeans;
 import net.hearnsoft.gensokyoradio.trd.db.SongHistoryDbHelper;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
+import net.hearnsoft.gensokyoradio.trd.utils.GlobalTimer;
 import net.hearnsoft.gensokyoradio.trd.utils.NullStringToEmptyAdapterFactory;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.ws.GRWebSocketClient;
@@ -239,6 +240,12 @@ public class WebSocketService extends Service {
                 .create();
         NowPlayingBean bean = gson.fromJson(jsonData, NowPlayingBean.class);
         wsInterface.beanReceived(bean);
+        //重置计数器并重新计时
+        GlobalTimer.getInstance().startTimer(
+                bean.getDuration(),
+                bean.getPlayed()+1,
+                bean.getRemaining()-1
+        );
         long rowId = SongHistoryDbHelper.getInstance(this).insertSong(
                 bean.getSongId(),
                 bean.getTitle(),

@@ -59,7 +59,9 @@ public class GRStreamPlayerService extends MediaSessionService {
         @Override
         public void onIsPlayingChanged(boolean isPlaying) {
             dataModel.getPlayerStatus().postValue(isPlaying);
-            if (BuildConfig.DEBUG) Log.d(TAG, "Player status:" + isPlaying);
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Player status:" + isPlaying);
+            }
         }
     };
 
@@ -71,7 +73,11 @@ public class GRStreamPlayerService extends MediaSessionService {
             if ("net.hearnsoft.gensokyoradio.trd.UPDATE_NOTIFICATION".equals(action)) {
                 Log.d(TAG, "replace new data");
                 if (session != null) {
-                    session.getPlayer().replaceMediaItem(session.getPlayer().getCurrentMediaItemIndex(), updateMetadataInfo());
+                    session.getPlayer()
+                            .replaceMediaItem(
+                                    session.getPlayer().getCurrentMediaItemIndex(),
+                                    updateMetadataInfo()
+                            );
                 }
             }
         }
