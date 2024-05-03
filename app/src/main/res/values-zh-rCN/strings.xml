@@ -40,4 +40,7 @@
     <string name="no_data_hint">这里什么都没有，就像⑨的脑袋一样。</string>
     <string name="clear_history_msg">确认清空历史记录？</string>
     <string name="history_cleared_toast">历史记录已清空</string>
+    <string name="socket_error_server_msg">ERROR: 收到服务器的错误信息: \n</string>
+    <string name="socket_error_json_data">ERROR: JSON数据出错!</string>
+    <string name="socket_error_reconnect">ERROR: Socket连接意外断开！正在重试次数： </string>
 </resources>

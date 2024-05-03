@@ -18,6 +18,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.beans.NowPlayingBean;
 import net.hearnsoft.gensokyoradio.trd.beans.SocketClientBeans;
 import net.hearnsoft.gensokyoradio.trd.db.SongHistoryDbHelper;
@@ -178,12 +179,14 @@ public class WebSocketService extends Service {
                 }
             } else if (message.startsWith("Error")) {
                 toastHandler.post(() ->
-                        Toast.makeText(getApplicationContext(),"ERROR: \n 收到服务器的错误信息: \n"
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.socket_error_server_msg)
                                 + message, Toast.LENGTH_SHORT).show());
             } else {
                 Log.e(TAG, "get invalid json data!");
                 toastHandler.post(() ->
-                        Toast.makeText(getApplicationContext(),"ERROR: 错误json数据!",
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.socket_error_json_data),
                                 Toast.LENGTH_SHORT).show());
             }
         } else {
@@ -307,7 +310,10 @@ public class WebSocketService extends Service {
      * 显示WebSocket错误断开toast
      */
     private void postSocketErrorToast(int recheck) {
-        toastHandler.post(() -> Toast.makeText(getApplicationContext(),"ERROR: Socket连接意外断开！正在重试次数：" + recheck, Toast.LENGTH_SHORT).show());
+        toastHandler.post(() ->
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.socket_error_reconnect) +
+                                recheck, Toast.LENGTH_SHORT).show());
     }
 
     /**
