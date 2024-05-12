@@ -396,6 +396,7 @@ public class MainActivity extends AppCompatActivity
                     .show(getSupportFragmentManager(), "settings");
         } else if (item.getItemId() == R.id.menu_history) {
             Intent intent = new Intent(this, SongHistoryActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP);
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
@@ -420,6 +421,26 @@ public class MainActivity extends AppCompatActivity
                     .into(binding.cover);
             songDataModel.getIsUpdatedInfo().postValue(false);
         }
+        if (visualizerUsable && visualizerView != null) {
+            visualizerView.setPlaying(true);
+            visualizerView.setVisible(true);
+            visualizerView.setPowerSaveMode(false);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        isUiPaused = false;
+        //无论是否更新过数据
+        binding.title.setText(songDataModel.getTitle().getValue());
+        binding.artist.setText(songDataModel.getArtist().getValue());
+        Glide.with(this)
+                .load(songDataModel.getCoverUrl().getValue())
+                .placeholder(R.drawable.ic_album)
+                .into(binding.cover);
+        songDataModel.getIsUpdatedInfo().postValue(false);
         if (visualizerUsable && visualizerView != null) {
             visualizerView.setPlaying(true);
             visualizerView.setVisible(true);
