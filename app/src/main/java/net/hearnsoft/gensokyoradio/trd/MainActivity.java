@@ -31,7 +31,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.lifecycle.Observer;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
@@ -61,6 +60,7 @@ import net.hearnsoft.gensokyoradio.trd.widgets.SettingsSheetDialog;
 import net.hearnsoft.gensokyoradio.trd.widgets.VisualizerView;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -199,6 +199,7 @@ public class MainActivity extends AppCompatActivity
         showNoticeDialog();
         startSocketService();
         songDataModel.getShowVisualizer().observe(this, show -> {
+            visualizerUsable = show;
             if (visualizerView != null) {
                 if (show) {
                     visualizerView.setPlaying(true);
@@ -308,7 +309,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void beanReceived(NowPlayingBean bean) {
-        Log.d(TAG, "beanReceived: " + bean.getSongId() + " " + bean.getTitle());
+        if (BuildConfig.DEBUG) Log.d(TAG, "beanReceived: " +
+                bean.getSongId() + " " + bean.getTitle());
         runOnUiThread(() -> {
             binding.title.setText(bean.getTitle());
             binding.artist.setText(bean.getArtist());
@@ -355,7 +357,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public String formatTime(int seconds) {
+    public static String formatTime(int seconds) {
+        if (Objects.isNull(seconds)) {
+            return "--:--";
+        }
         // 分钟数
         int minutes = seconds / 60;
         // 余下秒数
