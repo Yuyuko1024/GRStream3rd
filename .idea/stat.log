@@ -2994,3 +2994,13 @@
 {"ts":1715518969142,"action":"FILE_OPENED","file":"/app/src/main/java/net/hearnsoft/gensokyoradio/trd/MainActivity.java","tags":{"FILE_LINE_OF_CODE":"527"}}
 {"ts":1715518969940,"action":"FILE_CLOSED","file":"/app/src/main/java/net/hearnsoft/gensokyoradio/trd/MainActivity.java","tags":{"FILE_LINE_OF_CODE":"527"}}
 {"ts":1715518969940,"action":"FILE_OPENED","file":"/app/src/main/java/net/hearnsoft/gensokyoradio/trd/service/GRStreamPlayerService.java","tags":{"FILE_LINE_OF_CODE":"194"}}
+{"ts":1715518990817,"action":"IDE_DEACTIVATED"}
+{"ts":1715518992725,"action":"IDE_ACTIVATED"}
+{"ts":1715519011896,"action":"IDE_DEACTIVATED"}
+{"ts":1715519040461,"action":"IDE_ACTIVATED"}
+{"ts":1715519043462,"action":"FILE_CLOSED","file":"/app/src/main/java/net/hearnsoft/gensokyoradio/trd/service/GRStreamPlayerService.java","tags":{"FILE_LINE_OF_CODE":"194"}}
+{"ts":1715519043462,"action":"FILE_OPENED","file":"/app/src/main/AndroidManifest.xml","tags":{"FILE_LINE_OF_CODE":"58"}}
+{"ts":1715519044130,"action":"FILE_CLOSED","file":"/app/src/main/AndroidManifest.xml","tags":{"FILE_LINE_OF_CODE":"58"}}
+{"ts":1715519044130,"action":"FILE_OPENED","file":"/app/src/main/java/net/hearnsoft/gensokyoradio/trd/service/GRStreamPlayerService.java","tags":{"FILE_LINE_OF_CODE":"194"}}
+{"ts":1715519046072,"action":"FILE_CLOSED","file":"/app/src/main/java/net/hearnsoft/gensokyoradio/trd/service/GRStreamPlayerService.java","tags":{"FILE_LINE_OF_CODE":"194"}}
+{"ts":1715519046072,"action":"FILE_OPENED","file":"/app/src/main/res/values-zh-rCN/strings.xml","tags":{"FILE_LINE_OF_CODE":"46"}}
