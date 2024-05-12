@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -38,6 +39,8 @@ public class GRStreamPlayerService extends MediaSessionService {
     private static final String TAG = GRStreamPlayerService.class.getSimpleName();
 
     private MediaSession session;
+    private Intent intent;
+    private int flag;
     private SongDataModel dataModel;
 
     private final Player.Listener playerListener = new Player.Listener() {
@@ -95,6 +98,16 @@ public class GRStreamPlayerService extends MediaSessionService {
                 .registerReceiver(receiver, new IntentFilter("net.hearnsoft.gensokyoradio.trd.UPDATE_NOTIFICATION"));
         setMediaNotificationProvider(new DefaultMediaNotificationProvider.Builder(this).build());
 
+        intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP |
+                Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT | Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY |
+                Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            flag = PendingIntent.FLAG_IMMUTABLE;
+        } else {
+            flag = PendingIntent.FLAG_UPDATE_CURRENT;
+        }
+
         ExoPlayer player = new ExoPlayer.Builder(this)
                 .setAudioAttributes(AudioAttributes.DEFAULT, true)
                 .build();
@@ -123,8 +136,8 @@ public class GRStreamPlayerService extends MediaSessionService {
         return PendingIntent.getActivity(
                 this,
                 0,
-                new Intent(this, MainActivity.class),
-                PendingIntent.FLAG_IMMUTABLE
+                intent,
+                flag
         );
     }
 
