@@ -289,23 +289,30 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showNoticeDialog() {
-        DialogNoticeBinding dialogBinding = DialogNoticeBinding.inflate(getLayoutInflater());
-        new MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.notice_titie)
-                .setMessage(R.string.dialog_notice_message)
-                .setView(dialogBinding.getRoot())
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
-                .show();
-        dialogBinding.playBadge.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("market://details?id=net.gensokyoradio.app"));
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            } else {
-                intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=net.gensokyoradio.app"));
-                startActivity(intent);
-            }
-        });
+        if (!SettingsPrefUtils.getInstance(this)
+                .readBooleanSettings("showed_notice_dialog")) {
+            DialogNoticeBinding dialogBinding = DialogNoticeBinding.inflate(getLayoutInflater());
+            new MaterialAlertDialogBuilder(this)
+                    .setTitle(R.string.notice_titie)
+                    .setMessage(R.string.dialog_notice_message)
+                    .setView(dialogBinding.getRoot())
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                        SettingsPrefUtils.getInstance(MainActivity.this)
+                                        .writeBooleanSettings("showed_notice_dialog", true);
+                        dialog.dismiss();
+                    })
+                    .show();
+            dialogBinding.playBadge.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("market://details?id=net.gensokyoradio.app"));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=net.gensokyoradio.app"));
+                    startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override
