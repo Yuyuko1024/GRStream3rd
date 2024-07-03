@@ -12,9 +12,26 @@
       "filters": [],
       "attributes": [],
       "versionCode": 1,
-      "versionName": "1.0-04131521",
-      "outputFile": "gr3rd-app-release_1.0-04131521_noarch.apk"
+      "versionName": "1.15-07032138",
+      "outputFile": "gr3rd-app-release_1.15-07032138_noarch.apk"
     }
   ],
-  "elementType": "File"
+  "elementType": "File",
+  "baselineProfiles": [
+    {
+      "minApi": 28,
+      "maxApi": 30,
+      "baselineProfiles": [
+        "baselineProfiles/1/gr3rd-app-release_1.15-07032138_noarch.dm"
+      ]
+    },
+    {
+      "minApi": 31,
+      "maxApi": 2147483647,
+      "baselineProfiles": [
+        "baselineProfiles/0/gr3rd-app-release_1.15-07032138_noarch.dm"
+      ]
+    }
+  ],
+  "minSdkVersionForDexing": 26
 }
