@@ -49,4 +49,11 @@
     <string name="song_item_btn_copy">Copy text…</string>
     <string name="song_item_btn_search_placeholder">Search <xliff:g id="text">%s</xliff:g></string>
     <string name="song_item_btn_copy_placeholder">Copy <xliff:g id="text">%s</xliff:g></string>
+    <string name="about_title">About App</string>
+    <string name="about_content_text">GitHub <a href="https://github.com/Yuyuko1024">Junko Yuko</a> <br/><p>This is a third-party Android client that allows you to listen to <a href="https://gensokyoradio.net/">Gensokyo Radio</a>, a 24/7 internet radio station from <b>LunarSpotlight Media</b>.</p></string>
+    <string name="about_content_copyright" translatable="false">
+        The album art, circle art, and related images used on this site are for illustrative purposes only and are copyright their respective owners. \n\n
+Touhou Project is © Team Shanghai Alice / ZUN \n\n
+Gensokyo Radio and the Musical Torii logo are trademarks of Gensokyo Radio / LunarSpotlight Media
+    </string>
 </resources>

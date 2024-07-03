@@ -48,4 +48,6 @@
     <string name="song_item_btn_copy">复制文本…</string>
     <string name="song_item_btn_search_placeholder">搜索 <xliff:g id="text">%s</xliff:g></string>
     <string name="song_item_btn_copy_placeholder">复制 <xliff:g id="text">%s</xliff:g></string>
+    <string name="about_title">关于 App</string>
+    <string name="about_content_text">GitHub <a href="https://github.com/Yuyuko1024">Junko Yuko</a> <br/><p>这是一款可以收听来自美国东方同人社团 <b>LunarSpotlight Media</b> 的全天候网络电台 <a href="https://gensokyoradio.net/">Gensokyo Radio</a> 的第三方Android客户端。</p></string>
 </resources>

@@ -86,6 +86,10 @@ public class SettingsSheetDialog extends BaseSheetDialog {
         binding.settingsVisualizer.setOnClickListener(v -> showVisualizerNotice());
         binding.settingsEditServer.setOnClickListener(v -> editServer());
         binding.settingsVisualizerSwitch.setOnClickListener( v -> enableVisualizer());
+        binding.settingsAbout.setOnClickListener( v -> {
+            new AboutBottomSheet().show(getParentFragmentManager(), "about");
+            dismiss();
+        });
     }
 
     private void showVisualizerNotice() {
