@@ -43,4 +43,9 @@
     <string name="socket_error_server_msg">ERROR: 收到服务器的错误信息: \n</string>
     <string name="socket_error_json_data">ERROR: JSON数据出错!</string>
     <string name="socket_error_reconnect">ERROR: Socket连接意外断开！正在重试次数： </string>
+    <string name="song_item_info_footer_tips">可以长按文本来复制其中的文字。</string>
+    <string name="song_item_btn_search">在 THBWiki 中搜索…</string>
+    <string name="song_item_btn_copy">复制文本…</string>
+    <string name="song_item_btn_search_placeholder">搜索 <xliff:g id="text">%s</xliff:g></string>
+    <string name="song_item_btn_copy_placeholder">复制 <xliff:g id="text">%s</xliff:g></string>
 </resources>

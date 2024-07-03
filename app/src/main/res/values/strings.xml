@@ -43,4 +43,10 @@
     <string name="socket_error_server_msg">ERROR: Got error message from server: \n</string>
     <string name="socket_error_json_data">ERROR: Wrong JSON data!</string>
     <string name="socket_error_reconnect">ERROR: Socket connect unexpected, retry count: </string>
+    <string name="default_footer_tips" translatable="false">Default footer tips</string>
+    <string name="song_item_info_footer_tips">You can copy the text by long-pressing on it.</string>
+    <string name="song_item_btn_search">Search on THBWiki…</string>
+    <string name="song_item_btn_copy">Copy text…</string>
+    <string name="song_item_btn_search_placeholder">Search <xliff:g id="text">%s</xliff:g></string>
+    <string name="song_item_btn_copy_placeholder">Copy <xliff:g id="text">%s</xliff:g></string>
 </resources>
