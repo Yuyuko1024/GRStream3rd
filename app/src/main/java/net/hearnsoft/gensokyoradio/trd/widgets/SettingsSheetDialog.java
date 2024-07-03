@@ -34,7 +34,7 @@ import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class SettingsSheetDialog extends BottomSheetDialogFragment {
+public class SettingsSheetDialog extends BaseSheetDialog {
 
     private static final String TAG = SettingsSheetDialog.class.getSimpleName();
     private static final boolean DEBUG = BuildConfig.DEBUG;
@@ -43,11 +43,6 @@ public class SettingsSheetDialog extends BottomSheetDialogFragment {
     private SettingsSheetBinding binding;
     private String serverName;
     private SongDataModel songDataModel;
-
-    @Override
-    public int getTheme() {
-        return R.style.BottomSheetDialogTheme;
-    }
 
     public SettingsSheetDialog(Application application, Context context) {
         this.context = context;
@@ -183,10 +178,5 @@ public class SettingsSheetDialog extends BottomSheetDialogFragment {
 
     private int getIntPref(String key) {
         return SettingsPrefUtils.getInstance(context).readIntSettings(key);
-    }
-
-    @Override
-    public void onDismiss(@NonNull DialogInterface dialog) {
-        super.onDismiss(dialog);
     }
 }
