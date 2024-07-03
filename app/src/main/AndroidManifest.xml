@@ -35,10 +35,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SongHistoryActivity"
-            android:label="@string/song_history_title"
-            android:launchMode="singleInstancePerTask"
-            android:exported="true"/>
         <service android:name=".service.WebSocketService"
             android:foregroundServiceType="remoteMessaging"
             android:exported="false"/>
