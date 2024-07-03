@@ -6,6 +6,7 @@
     android:clickable="true"
     android:focusable="true"
     android:padding="8dp"
+    android:id="@+id/song_item"
     android:background="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">

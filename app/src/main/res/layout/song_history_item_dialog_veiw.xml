@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/cover"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/ic_album"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_title"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/system_accent_darker"
+                android:fontFamily="sans-serif"
+                android:textSize="17sp"/>
+
+            <net.hearnsoft.gensokyoradio.trd.widgets.MarqueeTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/info_title"
+                android:text="@string/info_unknown"
+                android:textColor="?attr/colorOnSurface"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                android:maxLines="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:ellipsize="marquee"
+                android:layout_marginStart="50dp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_artist"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/system_accent_darker"
+                android:fontFamily="sans-serif"
+                android:textSize="17sp"/>
+
+            <net.hearnsoft.gensokyoradio.trd.widgets.MarqueeTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/info_artist"
+                android:text="@string/info_unknown"
+                android:textColor="?attr/colorOnSurface"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                android:maxLines="1"
+                android:layout_marginStart="50dp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_album"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/system_accent_darker"
+                android:fontFamily="sans-serif"
+                android:textSize="17sp"/>
+
+            <net.hearnsoft.gensokyoradio.trd.widgets.MarqueeTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/info_album"
+                android:text="@string/info_unknown"
+                android:textColor="?attr/colorOnSurface"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                android:maxLines="1"
+                android:layout_marginStart="50dp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/info_circle"
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/system_accent_darker"
+                android:fontFamily="sans-serif"
+                android:textSize="17sp"/>
+
+            <net.hearnsoft.gensokyoradio.trd.widgets.MarqueeTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:id="@+id/info_circle"
+                android:text="@string/info_unknown"
+                android:textColor="?attr/colorOnSurface"
+                android:textIsSelectable="true"
+                android:textSize="16sp"
+                android:maxLines="1"
+                android:layout_marginStart="50dp"
+                android:fontFamily="sans-serif"
+                android:gravity="end"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <net.hearnsoft.gensokyoradio.trd.widgets.FooterTipsView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/footer_tips"/>
+
+</LinearLayout>
