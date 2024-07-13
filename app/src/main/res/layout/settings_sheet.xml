@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="24dp">
 
@@ -76,111 +77,26 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"/>
 
-    <LinearLayout
+    <net.hearnsoft.gensokyoradio.trd.widgets.CustomSettingsView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:id="@+id/settings_edit_server"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?attr/selectableItemBackground">
+        app:iconSrc="@drawable/ic_server"
+        app:titleText="@string/settings_edit_server_title"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_server"
-            android:focusable="false"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/settings_edit_server_title"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="16sp"
-            android:layout_marginStart="50dp"
-            android:fontFamily="sans-serif"
-            android:gravity="end"/>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <net.hearnsoft.gensokyoradio.trd.widgets.CustomSettingsSwitchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:id="@+id/settings_visualizer"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?attr/selectableItemBackground">
+        android:id="@+id/settings_visualizer_switch"
+        app:icon="@drawable/ic_visualizer"
+        app:title="@string/settings_ui_visualizer_title"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_visualizer"
-            android:focusable="false"/>
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-
-        <com.google.android.material.materialswitch.MaterialSwitch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:id="@+id/settings_visualizer_switch"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/settings_ui_visualizer_title"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="16sp"
-            android:layout_marginStart="8dp"
-            android:fontFamily="sans-serif"
-            android:gravity="end"/>
-
-    </LinearLayout>
-
-    <LinearLayout
+    <net.hearnsoft.gensokyoradio.trd.widgets.CustomSettingsView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:id="@+id/settings_about"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:background="?attr/selectableItemBackground">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/ic_info"
-            android:focusable="false"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/about_title"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="16sp"
-            android:layout_marginStart="50dp"
-            android:fontFamily="sans-serif"
-            android:gravity="end"/>
-
-    </LinearLayout>
+        app:iconSrc="@drawable/ic_info"
+        app:titleText="@string/about_title"/>
 
 
 </LinearLayout>
