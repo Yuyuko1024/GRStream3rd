@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -37,6 +38,8 @@ import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
@@ -63,6 +66,7 @@ import net.hearnsoft.gensokyoradio.trd.widgets.SongHistorySheetDialog;
 import net.hearnsoft.gensokyoradio.trd.widgets.VisualizerView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -87,6 +91,8 @@ public class MainActivity extends AppCompatActivity
     private ActivityMainBinding binding;
     private SongDataModel songDataModel;
     private ListenableFuture<MediaController> playerServiceFuture;
+    private int screenOrientation;
+    private ArrayList<BottomSheetDialogFragment> fragmentArrayList = new ArrayList<>();
     private boolean playBtnStatus = false;
     private boolean isUiPaused = false;
     private boolean visualizerUsable = false;
@@ -113,6 +119,7 @@ public class MainActivity extends AppCompatActivity
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.topAppbar);
+        screenOrientation = getResources().getConfiguration().orientation;
         //设置View top padding
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
             Insets statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars());
@@ -414,13 +421,32 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.menu_settings) {
-            new SettingsSheetDialog(getApplication(), this)
-                    .show(getSupportFragmentManager(), "settings");
+            SettingsSheetDialog dialog = new SettingsSheetDialog(getApplication(), this);
+            dialog.show(getSupportFragmentManager(), "settings");
+            fragmentArrayList.add(dialog);
         } else if (item.getItemId() == R.id.menu_history) {
-            new SongHistorySheetDialog(this)
-                    .show(getSupportFragmentManager(), "history");
+            SongHistorySheetDialog dialog = new SongHistorySheetDialog(this);
+            dialog.show(getSupportFragmentManager(), "history");
+            fragmentArrayList.add(dialog);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        if (screenOrientation != newConfig.orientation) {
+            for (BottomSheetDialogFragment fragment : fragmentArrayList) {
+                if (fragment.isVisible()) {
+                    fragment.dismiss();
+                }
+            }
+            fragmentArrayList.clear();
+            screenOrientation = newConfig.orientation;
+        }
+
+        recreate();
     }
 
     @Override
