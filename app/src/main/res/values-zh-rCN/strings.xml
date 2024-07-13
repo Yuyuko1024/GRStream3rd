@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name">秘封幻想电台</string>
+    <string name="app_name">幻想电台</string>
     <string name="dialog_notice_message">如你所见，这是一个Fan-made第三方Gensokyo Radio客户端。使用Material Design 3组件和AndroidX Media 3组成了一个简单的电台客户端，支持部分最新的Android功能。不过仅支持串流播放最高 256kbps mp3串流。如果你想支持Gensokyo Radio，请点击下方的图章进入Google Play下载官方完整版App享受更高质量的流媒体以及更多功能！</string>
     <string name="play_badge_content_desc">在Google Play下载完整版App</string>
     <string name="fetch_song_data_toast">正在获取当前播放的歌曲信息…</string>
