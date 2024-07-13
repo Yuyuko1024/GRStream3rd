@@ -18,11 +18,13 @@ import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.session.DefaultMediaNotificationProvider;
+import androidx.media3.session.MediaNotification;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
 
 import net.hearnsoft.gensokyoradio.trd.BuildConfig;
 import net.hearnsoft.gensokyoradio.trd.MainActivity;
+import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
@@ -91,7 +93,10 @@ public class GRStreamPlayerService extends MediaSessionService {
         dataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
         LocalBroadcastManager.getInstance(this)
                 .registerReceiver(receiver, new IntentFilter("net.hearnsoft.gensokyoradio.trd.UPDATE_NOTIFICATION"));
-        setMediaNotificationProvider(new DefaultMediaNotificationProvider.Builder(this).build());
+        DefaultMediaNotificationProvider provider = new DefaultMediaNotificationProvider.Builder(this)
+                .build();
+        provider.setSmallIcon(R.drawable.ic_icon_foreground);
+        setMediaNotificationProvider(provider);
 
         intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP |
