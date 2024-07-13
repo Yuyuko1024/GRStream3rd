@@ -60,7 +60,6 @@ public class WebSocketService extends Service {
     public void onCreate() {
         super.onCreate();
         uri = URI.create(Constants.WS_URL);
-        SharedPreferences sharedPreferences = getSharedPreferences(Constants.PREF_GLOBAL_NAME, MODE_PRIVATE);
         toastHandler = new Handler(Looper.getMainLooper());
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
@@ -77,28 +76,16 @@ public class WebSocketService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         // only start once
-        if (isRunningService) {
-            Log.e(TAG, "service already running!");
-            return super.onStartCommand(intent, flags, startId);
-        } else {
+        if (!isRunningService) {
             isRunningService = true;
+            signalThreadPool.submit(this::initConn);
         }
-        signalThreadPool.submit(this::initConn);
-        return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-        // Service unbind, close WebSocket client
-        // Service 解绑，关闭 WebSocket 客户端
-        closeWsClient();
-        isRunningService = false;
-        return false;
     }
 
     private void initWebSocket() {
