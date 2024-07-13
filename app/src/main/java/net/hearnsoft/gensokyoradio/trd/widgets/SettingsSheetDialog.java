@@ -1,26 +1,19 @@
 package net.hearnsoft.gensokyoradio.trd.widgets;
 
-import static android.content.pm.PackageManager.PERMISSION_GRANTED;
-
 import android.Manifest;
 import android.app.Application;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.hearnsoft.gensokyoradio.trd.BuildConfig;
@@ -28,7 +21,6 @@ import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.databinding.SettingsEditServerBinding;
 import net.hearnsoft.gensokyoradio.trd.databinding.SettingsSheetBinding;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
-import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 
