@@ -39,6 +39,7 @@ public class AboutBottomSheet extends BaseSheetDialog {
         super.onViewCreated(view, savedInstanceState);
         binding.icon.setImageDrawable(getSelfIcon(requireContext()));
         binding.aboutContent.setMovementMethod(LinkMovementMethod.getInstance());
+        binding.versionText.setText("version: " + BuildConfig.VERSION_NAME);
     }
 
     private Drawable getSelfIcon(Context context) {
