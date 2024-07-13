@@ -77,7 +77,7 @@ public class WebSocketService extends Service {
             isRunningService = true;
             signalThreadPool.submit(this::initConn);
         }
-        return START_STICKY;
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
