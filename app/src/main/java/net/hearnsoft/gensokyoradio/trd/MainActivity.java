@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
@@ -78,32 +80,19 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends AppCompatActivity
         implements WsServiceInterface, TimerUpdateListener {
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String PLAY_BTN_STATUS = "PLAY_BTN_STATUS";
     // requestCode
     public static final int RC_PERM_DEFAULT = 1;
     private final ExecutorService signalThreadPool = Executors.newSingleThreadExecutor();
     private ActivityMainBinding binding;
     private SongDataModel songDataModel;
-    private Intent WsIntent;
     private ListenableFuture<MediaController> playerServiceFuture;
-    private boolean isBound = false;
+    private boolean playBtnStatus = false;
     private boolean isUiPaused = false;
     private boolean visualizerUsable = false;
     private VisualizerView visualizerView;
     private SongDataBean dataBean;
     private String nowPlayingTitle,nowPlayingArtist,nowPlayingAlbum,nowPlayingYears,nowPlayingCircle;
-    private final ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d(TAG, "Service bind ready");
-            isBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "Service disconnect ready");
-            isBound = false;
-        }
-    };
 
     private final Handler handler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -137,12 +126,15 @@ public class MainActivity extends AppCompatActivity
             return insets;
         });
         WebSocketService.setCallback(this);
-        binding.play.setEnabled(false);
+        binding.play.setEnabled(playBtnStatus);
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
         requestPermissions();
         initVisualizer();
         GlobalTimer.getInstance().addListener(this);
+        if (savedInstanceState != null) {
+            binding.play.setEnabled(savedInstanceState.getBoolean(PLAY_BTN_STATUS, false));
+        }
         binding.songInfoBtn.setOnClickListener(v -> {
             CompletableFuture<Boolean> future = getNowPlaying();
             Toast.makeText(this, R.string.fetch_song_data_toast, Toast.LENGTH_SHORT).show();
@@ -177,6 +169,13 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+        showNoticeDialog();
+        startAppService();
+        setViewObserve();
+        //Debug.stopMethodTracing();
+    }
+
+    private void setViewObserve() {
         songDataModel.getBufferingState().observe(this, bufferingState -> {
             switch (bufferingState) {
                 case 0:
@@ -197,8 +196,7 @@ public class MainActivity extends AppCompatActivity
                 binding.play.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_play, getTheme()));
             }
         });
-        showNoticeDialog();
-        startSocketService();
+
         songDataModel.getShowVisualizer().observe(this, show -> {
             visualizerUsable = show;
             if (visualizerView != null) {
@@ -215,7 +213,27 @@ public class MainActivity extends AppCompatActivity
                 initVisualizer();
             }
         });
-        //Debug.stopMethodTracing();
+
+        //无论是否更新过数据
+        binding.title.setText(songDataModel.getTitle().getValue());
+        binding.artist.setText(songDataModel.getArtist().getValue());
+        Glide.with(this)
+                .load(songDataModel.getCoverUrl().getValue())
+                .placeholder(R.drawable.ic_album)
+                .into(binding.cover);
+        songDataModel.getIsUpdatedInfo().postValue(false);
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putBoolean(PLAY_BTN_STATUS, playBtnStatus);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        playBtnStatus = savedInstanceState.getBoolean(PLAY_BTN_STATUS, false);
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void requestPermissions() {
@@ -272,13 +290,8 @@ public class MainActivity extends AppCompatActivity
         visualizerView.setPowerSaveMode(false);
     }
 
-    private void startSocketService(){
+    private void startAppService(){
         signalThreadPool.submit(() -> {
-            if (!isBound && WsIntent == null) {
-                WsIntent = new Intent(MainActivity.this, WebSocketService.class);
-                startService(WsIntent);
-                bindService(WsIntent, connection, BIND_AUTO_CREATE);
-            }
             if (playerServiceFuture == null) {
                 playerServiceFuture = new MediaController.Builder(MainActivity.this,
                         new SessionToken(MainActivity.this,
@@ -328,6 +341,7 @@ public class MainActivity extends AppCompatActivity
                     .into(binding.cover);
             //showProgress();
             binding.play.setEnabled(true);
+            playBtnStatus = true;
         });
     }
 
@@ -436,26 +450,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        isUiPaused = false;
-        //无论是否更新过数据
-        binding.title.setText(songDataModel.getTitle().getValue());
-        binding.artist.setText(songDataModel.getArtist().getValue());
-        Glide.with(this)
-                .load(songDataModel.getCoverUrl().getValue())
-                .placeholder(R.drawable.ic_album)
-                .into(binding.cover);
-        songDataModel.getIsUpdatedInfo().postValue(false);
-        if (visualizerUsable && visualizerView != null) {
-            visualizerView.setPlaying(true);
-            visualizerView.setVisible(true);
-            visualizerView.setPowerSaveMode(false);
-        }
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
         Log.d("MainActivity", "onPause: ");
@@ -476,8 +470,6 @@ public class MainActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         Log.d("MainActivity", "onDestroy: ");
-        stopService(WsIntent);
-        unbindService(connection);
         if (playerServiceFuture.isDone() && !playerServiceFuture.isCancelled()) {
             try {
                 playerServiceFuture.get().release();
@@ -487,7 +479,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             playerServiceFuture.cancel(true);
         }
-        GlobalTimer.getInstance().stopTimer();
         GlobalTimer.getInstance().removeListener(this);
     }
 
