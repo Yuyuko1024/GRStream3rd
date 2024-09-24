@@ -88,7 +88,6 @@ public class MainActivity extends AppCompatActivity
     private ListenableFuture<MediaController> playerServiceFuture;
     private int screenOrientation;
     private ArrayList<BottomSheetDialogFragment> fragmentArrayList = new ArrayList<>();
-    private boolean playBtnStatus = false;
     private boolean isUiPaused = false;
     private boolean visualizerUsable = false;
     private VisualizerView visualizerView;
@@ -118,15 +117,11 @@ public class MainActivity extends AppCompatActivity
             return insets;
         });
         WebSocketService.setCallback(this);
-        binding.play.setEnabled(playBtnStatus);
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
         requestPermissions();
         initVisualizer();
         GlobalTimer.getInstance().addListener(this);
-        if (savedInstanceState != null) {
-            binding.play.setEnabled(savedInstanceState.getBoolean(PLAY_BTN_STATUS, false));
-        }
         binding.songInfoBtn.setOnClickListener(v -> {
             Toast.makeText(this, R.string.fetch_song_data_toast, Toast.LENGTH_SHORT).show();
             getNowPlaying().thenAcceptAsync(isOK -> {
@@ -147,6 +142,9 @@ public class MainActivity extends AppCompatActivity
                     runOnUiThread(this::buildNowPlayingDialog);
                 }
             }, AsyncTask.THREAD_POOL_EXECUTOR);
+        });
+        songDataModel.getPlayBtnStatus().observe(this, status -> {
+            binding.play.setEnabled(status);
         });
         binding.play.setOnClickListener(v -> {
             if (playerServiceFuture.isDone() && !playerServiceFuture.isCancelled()) {
@@ -213,18 +211,6 @@ public class MainActivity extends AppCompatActivity
                 .placeholder(R.drawable.ic_album)
                 .into(binding.cover);
         songDataModel.getIsUpdatedInfo().postValue(false);
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putBoolean(PLAY_BTN_STATUS, playBtnStatus);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        playBtnStatus = savedInstanceState.getBoolean(PLAY_BTN_STATUS, false);
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private void requestPermissions() {
@@ -331,8 +317,7 @@ public class MainActivity extends AppCompatActivity
                     .placeholder(R.drawable.ic_album)
                     .into(binding.cover);
             //showProgress();
-            binding.play.setEnabled(true);
-            playBtnStatus = true;
+            songDataModel.getPlayBtnStatus().postValue(true);
         });
     }
 
