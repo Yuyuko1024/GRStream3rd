@@ -66,8 +66,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -80,7 +78,6 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends AppCompatActivity
         implements WsServiceInterface, TimerUpdateListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private static final String PLAY_BTN_STATUS = "PLAY_BTN_STATUS";
     // requestCode
     public static final int RC_PERM_DEFAULT = 1;
     private ActivityMainBinding binding;
@@ -89,10 +86,8 @@ public class MainActivity extends AppCompatActivity
     private int screenOrientation;
     private ArrayList<BottomSheetDialogFragment> fragmentArrayList = new ArrayList<>();
     private boolean isUiPaused = false;
-    private boolean visualizerUsable = false;
     private VisualizerView visualizerView;
     private SongDataBean dataBean;
-    private String nowPlayingTitle,nowPlayingArtist,nowPlayingAlbum,nowPlayingYears,nowPlayingCircle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,16 +124,6 @@ public class MainActivity extends AppCompatActivity
                     if (BuildConfig.DEBUG) {
                         Log.d(TAG, "onCreate: " + dataBean.getSongInfo().getTitle());
                     }
-                    nowPlayingTitle = dataBean.getSongInfo().getTitle() == null ?
-                            "null" : dataBean.getSongInfo().getTitle();
-                    nowPlayingArtist = dataBean.getSongInfo().getArtist() == null ?
-                            "null" : dataBean.getSongInfo().getArtist();
-                    nowPlayingAlbum = dataBean.getSongInfo().getAlbum() == null ?
-                            "null" : dataBean.getSongInfo().getAlbum();
-                    nowPlayingYears = dataBean.getSongInfo().getYear() == null ?
-                            "null" : dataBean.getSongInfo().getYear();
-                    nowPlayingCircle = dataBean.getSongInfo().getCircle() == null ?
-                            "null" : dataBean.getSongInfo().getCircle();
                     runOnUiThread(this::buildNowPlayingDialog);
                 }
             }, AsyncTask.THREAD_POOL_EXECUTOR);
@@ -187,7 +172,7 @@ public class MainActivity extends AppCompatActivity
         });
 
         songDataModel.getShowVisualizer().observe(this, show -> {
-            visualizerUsable = show;
+            songDataModel.getVisualizerUsable().postValue(show);
             if (visualizerView != null) {
                 if (show) {
                     visualizerView.setPlaying(true);
@@ -242,10 +227,12 @@ public class MainActivity extends AppCompatActivity
                 showVisualizer();
             }
             songDataModel.getShowVisualizer().postValue(showVisualizer);
+            songDataModel.getVisualizerUsable().postValue(showVisualizer);
         } else {
             if (showVisualizer) {
                 SettingsPrefUtils.getInstance(this).writeBooleanSettings("visualizer", false);
             }
+            songDataModel.getVisualizerUsable().postValue(false);
         }
     }
 
@@ -259,12 +246,12 @@ public class MainActivity extends AppCompatActivity
                 );
         params.gravity = Gravity.BOTTOM;
         binding.container.addView(visualizerView, 0, params);
-        visualizerUsable = true;
         visualizerView.initialize(this);
         visualizerView.setPlaying(true);
         visualizerView.setVisible(true);
         visualizerView.setColor(ContextCompat.getColor(this, R.color.system_accent));
         visualizerView.setPowerSaveMode(false);
+        songDataModel.getVisualizerUsable().postValue(true);
     }
 
     private void startAppService(){
@@ -324,11 +311,11 @@ public class MainActivity extends AppCompatActivity
     private void buildNowPlayingDialog() {
         DialogNowPlayingBinding nowPlayingBinding = DialogNowPlayingBinding.inflate(
                 LayoutInflater.from(this), null, false);
-        nowPlayingBinding.infoTitle.setText(nowPlayingTitle);
-        nowPlayingBinding.infoArtist.setText(nowPlayingArtist);
-        nowPlayingBinding.infoAlbum.setText(nowPlayingAlbum);
-        nowPlayingBinding.infoYears.setText(nowPlayingYears);
-        nowPlayingBinding.infoCircle.setText(nowPlayingCircle);
+        nowPlayingBinding.infoTitle.setText(songDataModel.getNowPlayingTitle().getValue());
+        nowPlayingBinding.infoArtist.setText(songDataModel.getNowPlayingArtist().getValue());
+        nowPlayingBinding.infoAlbum.setText(songDataModel.getNowPlayingAlbum().getValue());
+        nowPlayingBinding.infoYears.setText(songDataModel.getNowPlayingYears().getValue());
+        nowPlayingBinding.infoCircle.setText(songDataModel.getNowPlayingCircle().getValue());
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(MainActivity.this)
                 .setTitle(R.string.song_info_title)
                 .setView(nowPlayingBinding.getRoot())
@@ -437,7 +424,7 @@ public class MainActivity extends AppCompatActivity
                     .into(binding.cover);
             songDataModel.getIsUpdatedInfo().postValue(false);
         }
-        if (visualizerUsable && visualizerView != null) {
+        if (Boolean.TRUE.equals(songDataModel.getVisualizerUsable().getValue()) && visualizerView != null) {
             visualizerView.setPlaying(true);
             visualizerView.setVisible(true);
             visualizerView.setPowerSaveMode(false);
@@ -449,7 +436,7 @@ public class MainActivity extends AppCompatActivity
         super.onPause();
         Log.d("MainActivity", "onPause: ");
         isUiPaused = true;
-        if (visualizerUsable && visualizerView != null) {
+        if (Boolean.TRUE.equals(songDataModel.getVisualizerUsable().getValue()) && visualizerView != null) {
             visualizerView.setPlaying(false);
             visualizerView.setVisible(false);
             visualizerView.setPowerSaveMode(true);
@@ -506,6 +493,11 @@ public class MainActivity extends AppCompatActivity
                                 .enableComplexMapKeySerialization()
                                 .create();
                         dataBean = gson.fromJson(body, SongDataBean.class);
+                        songDataModel.getNowPlayingTitle().postValue(dataBean.getSongInfo().getTitle());
+                        songDataModel.getNowPlayingArtist().postValue(dataBean.getSongInfo().getArtist());
+                        songDataModel.getNowPlayingAlbum().postValue(dataBean.getSongInfo().getAlbum());
+                        songDataModel.getNowPlayingYears().postValue(dataBean.getSongInfo().getYear());
+                        songDataModel.getNowPlayingCircle().postValue(dataBean.getSongInfo().getCircle());
                         future.complete(true);
                     }
                     future.complete(false);

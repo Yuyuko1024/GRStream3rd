@@ -85,4 +85,53 @@ public class SongDataModel extends ViewModel {
         return playBtnStatus;
     }
 
+    private MutableLiveData<Boolean> visualizerUsable;
+    public MutableLiveData<Boolean> getVisualizerUsable() {
+        if (visualizerUsable == null) {
+            visualizerUsable = new MutableLiveData<>();
+            visualizerUsable.setValue(false);
+        }
+        return visualizerUsable;
+    }
+
+    private MutableLiveData<String> nowPlayingTitle;
+    public MutableLiveData<String> getNowPlayingTitle() {
+        if (nowPlayingTitle == null) {
+            nowPlayingTitle = new MutableLiveData<>();
+        }
+        return nowPlayingTitle;
+    }
+
+    private MutableLiveData<String> nowPlayingArtist;
+    public MutableLiveData<String> getNowPlayingArtist() {
+        if (nowPlayingArtist == null) {
+            nowPlayingArtist = new MutableLiveData<>();
+        }
+        return nowPlayingArtist;
+    }
+
+    private MutableLiveData<String> nowPlayingAlbum;
+    public MutableLiveData<String> getNowPlayingAlbum() {
+        if (nowPlayingAlbum == null) {
+            nowPlayingAlbum = new MutableLiveData<>();
+        }
+        return nowPlayingAlbum;
+    }
+
+    private MutableLiveData<String> nowPlayingYears;
+    public MutableLiveData<String> getNowPlayingYears() {
+        if (nowPlayingYears == null) {
+            nowPlayingYears = new MutableLiveData<>();
+        }
+        return nowPlayingYears;
+    }
+
+    private MutableLiveData<String> nowPlayingCircle;
+    public MutableLiveData<String> getNowPlayingCircle() {
+        if (nowPlayingCircle == null) {
+            nowPlayingCircle = new MutableLiveData<>();
+        }
+        return nowPlayingCircle;
+    }
+
 }
