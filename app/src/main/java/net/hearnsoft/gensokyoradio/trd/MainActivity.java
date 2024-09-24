@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -82,7 +83,6 @@ public class MainActivity extends AppCompatActivity
     private static final String PLAY_BTN_STATUS = "PLAY_BTN_STATUS";
     // requestCode
     public static final int RC_PERM_DEFAULT = 1;
-    private final ExecutorService signalThreadPool = Executors.newSingleThreadExecutor();
     private ActivityMainBinding binding;
     private SongDataModel songDataModel;
     private ListenableFuture<MediaController> playerServiceFuture;
@@ -94,16 +94,6 @@ public class MainActivity extends AppCompatActivity
     private VisualizerView visualizerView;
     private SongDataBean dataBean;
     private String nowPlayingTitle,nowPlayingArtist,nowPlayingAlbum,nowPlayingYears,nowPlayingCircle;
-
-    private final Handler handler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            if (msg.what == 1) {
-                buildNowPlayingDialog();
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,9 +128,8 @@ public class MainActivity extends AppCompatActivity
             binding.play.setEnabled(savedInstanceState.getBoolean(PLAY_BTN_STATUS, false));
         }
         binding.songInfoBtn.setOnClickListener(v -> {
-            CompletableFuture<Boolean> future = getNowPlaying();
             Toast.makeText(this, R.string.fetch_song_data_toast, Toast.LENGTH_SHORT).show();
-            future.thenAccept(isOK -> {
+            getNowPlaying().thenAcceptAsync(isOK -> {
                 if (isOK) {
                     if (BuildConfig.DEBUG) {
                         Log.d(TAG, "onCreate: " + dataBean.getSongInfo().getTitle());
@@ -155,9 +144,9 @@ public class MainActivity extends AppCompatActivity
                             "null" : dataBean.getSongInfo().getYear();
                     nowPlayingCircle = dataBean.getSongInfo().getCircle() == null ?
                             "null" : dataBean.getSongInfo().getCircle();
-                    handler.sendEmptyMessage(1);
+                    runOnUiThread(this::buildNowPlayingDialog);
                 }
-            });
+            }, AsyncTask.THREAD_POOL_EXECUTOR);
         });
         binding.play.setOnClickListener(v -> {
             if (playerServiceFuture.isDone() && !playerServiceFuture.isCancelled()) {
@@ -293,7 +282,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startAppService(){
-        signalThreadPool.submit(() -> {
+        CompletableFuture.runAsync(() -> {
             if (playerServiceFuture == null) {
                 playerServiceFuture = new MediaController.Builder(MainActivity.this,
                         new SessionToken(MainActivity.this,
