@@ -43,14 +43,16 @@ public class VisualizerView extends View {
 
     private static final long DURATION_LINK = 800;
     private static final long DURATION_UNLINK = 600;
-    private int mSessionId;
+
+    private static final int CAPTURE_SIZE = Visualizer.getCaptureSizeRange()[0];
+    private static final int POINTS_SIZE = CAPTURE_SIZE / 4;
 
     private Paint mPaint;
     private Visualizer mVisualizer;
     private ObjectAnimator mVisualizerColorAnimator;
 
-    private final ValueAnimator[] mValueAnimators = new ValueAnimator[32];
-    private final float[] mFFTPoints = new float[128];
+    private final ValueAnimator[] mValueAnimators = new ValueAnimator[POINTS_SIZE];
+    private final float[] mFFTPoints = new float[CAPTURE_SIZE];
 
     private boolean mVisible = false;
     private boolean mPlaying = false;
@@ -63,9 +65,9 @@ public class VisualizerView extends View {
 
     private final Visualizer.OnDataCaptureListener mVisualizerListener =
             new Visualizer.OnDataCaptureListener() {
-                byte rfk, ifk;
-                int dbValue;
-                float magnitude;
+                private float magnitudeToDB(float magnitude) {
+                    return magnitude > 0 ? (float) (20 * Math.log10(magnitude)) : 0;
+                }
 
                 @Override
                 public void onWaveFormDataCapture(Visualizer visualizer, byte[] bytes,
@@ -76,17 +78,20 @@ public class VisualizerView extends View {
                 @Override
                 public void onFftDataCapture(Visualizer visualizer, byte[] fft,
                                              int samplingRate) {
-                    for (int i = 0; i < 32; i++) {
-                        mValueAnimators[i].cancel();
+                    float[] decibels = new float[POINTS_SIZE];
+                    decibels[0] = magnitudeToDB((float) Math.abs(fft[0]));
+                    for (int k = 1; k < POINTS_SIZE; k++) {
+                        int i = k * 2;
+                        float magnitude = (float) Math.hypot(fft[i], fft[i + 1]);
+                        decibels[k] = magnitudeToDB(magnitude);
+                    }
 
-                        rfk = fft[i * 2 + 2];
-                        ifk = fft[i * 2 + 3];
-                        magnitude = rfk * rfk + ifk * ifk;
-                        dbValue = magnitude > 0 ? (int) (10 * Math.log10(magnitude)) : 0;
+                    for (int i = 0; i < POINTS_SIZE; i++) {
+                        mValueAnimators[i].cancel();
 
                         mValueAnimators[i].setFloatValues(
                                 mFFTPoints[i * 4 + 1],
-                                mFFTPoints[3] - (dbValue * 16f));
+                                mFFTPoints[3] - decibels[i] * 16f);
                         mValueAnimators[i].start();
                     }
                 }
@@ -103,7 +108,7 @@ public class VisualizerView extends View {
             }
 
             mVisualizer.setEnabled(false);
-            mVisualizer.setCaptureSize(66);
+            mVisualizer.setCaptureSize(CAPTURE_SIZE);
             mVisualizer.setDataCaptureListener(mVisualizerListener, Visualizer.getMaxCaptureRate(),
                     false, true);
             mVisualizer.setEnabled(true);
@@ -154,12 +159,12 @@ public class VisualizerView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        float barUnit = w / 32f;
+        float barUnit = w / (float) POINTS_SIZE;
         float barWidth = barUnit * 8f / 9f;
-        barUnit = barWidth + (barUnit - barWidth) * 32f / 31f;
+        barUnit = barWidth + (barUnit - barWidth) * (float) POINTS_SIZE / (POINTS_SIZE - 1f);
         mPaint.setStrokeWidth(barWidth);
 
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < POINTS_SIZE; i++) {
             mFFTPoints[i * 4] = mFFTPoints[i * 4 + 2] = i * barUnit + (barWidth / 2);
             mFFTPoints[i * 4 + 1] = h;
             mFFTPoints[i * 4 + 3] = h;
@@ -183,10 +188,10 @@ public class VisualizerView extends View {
         mPaint.setAntiAlias(true);
         mPaint.setColor(mColor);
 
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < POINTS_SIZE; i++) {
             final int j = i * 4 + 1;
             mValueAnimators[i] = new ValueAnimator();
-            mValueAnimators[i].setDuration(128);
+            mValueAnimators[i].setDuration(CAPTURE_SIZE);
             mValueAnimators[i].addUpdateListener(animation ->
                     mFFTPoints[j] = (float) animation.getAnimatedValue());
         }
