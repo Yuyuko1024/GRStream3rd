@@ -1,11 +1,19 @@
 package net.hearnsoft.gensokyoradio.trd;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.WallpaperColors;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -24,9 +32,12 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.compose.material3.ColorScheme;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
@@ -35,7 +46,10 @@ import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
@@ -100,17 +114,14 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(binding.topAppbar);
         screenOrientation = getResources().getConfiguration().orientation;
         //设置View top padding
-        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(binding.appBar, (v, insets) -> {
             Insets statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars());
-            if (CarUtils.isAutomotiveOS(this)) {
-                Log.d(TAG, "is Automotive OS");
-                Insets nav = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-                v.setPadding(0, statusBar.top, 0, nav.top);
-            } else {
-                v.setPadding(0, statusBar.top, 0, 0);
-            }
+            v.setPadding(0, statusBar.top, 0, 0);
+            binding.cover.setPadding(0, statusBar.top,0,0);
             return insets;
         });
+        // 设置全屏和透明状态栏
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         WebSocketService.setCallback(this);
         // 获取全局ViewModel
         songDataModel = ViewModelUtils.getViewModel(getApplication(), SongDataModel.class);
@@ -302,7 +313,67 @@ public class MainActivity extends AppCompatActivity
             Glide.with(this)
                     .load(bean.getAlbumArt())
                     .placeholder(R.drawable.ic_album)
-                    .into(binding.cover);
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            binding.cover.setImageDrawable(resource);
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                if (resource instanceof BitmapDrawable) {
+                                    Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
+                                    WallpaperColors colors = WallpaperColors.fromBitmap(bitmap);
+
+                                    // 获取主色调
+                                    Color primaryColor = colors.getPrimaryColor();
+                                    int colorInt = primaryColor.toArgb();
+
+                                    // 设置状态栏颜色 (220透明度)
+                                    int systemBarColor = ColorUtils.setAlphaComponent(colorInt, 220);
+                                    getWindow().setStatusBarColor(systemBarColor);
+
+                                    // 计算颜色亮度
+                                    double luminance = ColorUtils.calculateLuminance(colorInt);
+
+                                    // 根据亮度决定文字和图标颜色
+                                    int textIconColor = luminance > 0.5 ? Color.BLACK : Color.WHITE;
+
+                                    // 应用到 Toolbar
+                                    binding.topAppbar.setTitleTextColor(textIconColor);
+                                    binding.topAppbar.setNavigationIconTint(textIconColor);
+
+                                    // 更新菜单项图标颜色
+                                    Menu menu = binding.topAppbar.getMenu();
+                                    for (int i = 0; i < menu.size(); i++) {
+                                        MenuItem item = menu.getItem(i);
+                                        if (item.getIcon() != null) {
+                                            item.getIcon().setTint(textIconColor);
+                                        }
+                                    }
+
+                                    // Cover 渐变设置 - 使用更多的渐变点实现平滑过渡
+                                    GradientDrawable gradient = new GradientDrawable(
+                                            GradientDrawable.Orientation.TOP_BOTTOM,
+                                            new int[] {
+                                                    ColorUtils.setAlphaComponent(colorInt, 255),       // 顶部
+                                                    ColorUtils.setAlphaComponent(colorInt, 255),       // 顶部延续颜色以覆盖ActionBar
+                                                    ColorUtils.setAlphaComponent(colorInt, 200),       // 中部
+                                                    ColorUtils.setAlphaComponent(colorInt, 100),       // 中下部
+                                                    ColorUtils.setAlphaComponent(colorInt, 40),        // 下部
+                                                    ColorUtils.setAlphaComponent(colorInt, 0)          // 底部完全透明
+                                            }
+                                    );
+                                    if (binding.coverGradient != null) {
+                                        binding.coverGradient.setBackground(gradient);
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            binding.cover.setImageDrawable(placeholder);
+                        }
+                    });
             //showProgress();
             songDataModel.getPlayBtnStatus().postValue(true);
         });
