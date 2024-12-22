@@ -10,6 +10,7 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.MediaItem;
@@ -39,6 +40,7 @@ public class GRStreamPlayerService extends MediaSessionService {
     private Intent intent;
     private int flag;
     private SongDataModel dataModel;
+    private Observer<Boolean> networkObserver;
 
     private final Player.Listener playerListener = new Player.Listener() {
         @Override
@@ -120,6 +122,17 @@ public class GRStreamPlayerService extends MediaSessionService {
         session.getPlayer().setPlayWhenReady(false);
         session.getPlayer().prepare();
         session.getPlayer().addListener(playerListener);
+
+        // 创建网络状态观察者
+        networkObserver = isNetworkAvailable -> {
+            if (!isNetworkAvailable && session != null && session.getPlayer() != null) {
+                // 网络断开时暂停播放
+                session.getPlayer().pause();
+            }
+        };
+
+        // 使用 observeForever 观察网络状态
+        dataModel.getNetworkStatus().observeForever(networkObserver);
     }
 
     @Override
@@ -187,6 +200,10 @@ public class GRStreamPlayerService extends MediaSessionService {
         session.getPlayer().release();
         session.release();
         session = null;
+        // 移除观察者
+        if (networkObserver != null) {
+            dataModel.getNetworkStatus().removeObserver(networkObserver);
+        }
         super.onDestroy();
     }
 

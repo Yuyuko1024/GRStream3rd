@@ -1,13 +1,20 @@
 package net.hearnsoft.gensokyoradio.trd.service;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
@@ -45,6 +52,8 @@ public class WebSocketService extends Service {
     private SongDataModel songDataModel;
     private Handler toastHandler;
     private URI uri;
+    private ConnectivityManager.NetworkCallback networkCallback;
+    private ConnectivityManager connectivityManager;
     private int clientId;
     private int recheck = 0;
     private boolean isRunningService = false;
@@ -68,6 +77,9 @@ public class WebSocketService extends Service {
                 .enableComplexMapKeySerialization()
                 .create();
         initWebSocket();
+        // 初始化网络监听
+        connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        setupNetworkCallback();
     }
 
     @Override
@@ -83,6 +95,47 @@ public class WebSocketService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    private void setupNetworkCallback() {
+        networkCallback = new ConnectivityManager.NetworkCallback() {
+            @Override
+            public void onAvailable(@NonNull Network network) {
+                super.onAvailable(network);
+                Log.d(TAG, "Network available");
+                songDataModel.getNetworkStatus().postValue(true);
+
+                if (wsClient == null || !wsClient.isOpen()) {
+                    signalThreadPool.submit(() -> {
+                        initWebSocket();
+                        initConn();
+                    });
+                }
+
+                toastHandler.post(() ->
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.network_restored),
+                                Toast.LENGTH_SHORT).show());
+            }
+
+            @Override
+            public void onLost(@NonNull Network network) {
+                super.onLost(network);
+                Log.d(TAG, "Network lost");
+                songDataModel.getNetworkStatus().postValue(false);
+
+                closeWsClient();
+                recheck = 0;
+
+                toastHandler.post(() ->
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.network_lost),
+                                Toast.LENGTH_SHORT).show());
+            }
+        };
+
+        // 注册网络回调
+        connectivityManager.registerDefaultNetworkCallback(networkCallback);
     }
 
     private void initWebSocket() {
@@ -319,6 +372,15 @@ public class WebSocketService extends Service {
 
     @Override
     public void onDestroy() {
+        // 注销网络监听
+        if (connectivityManager != null && networkCallback != null) {
+            try {
+                connectivityManager.unregisterNetworkCallback(networkCallback);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to unregister network callback", e);
+            }
+        }
+
         super.onDestroy();
         closeWsClient();
         isRunningService = false;
