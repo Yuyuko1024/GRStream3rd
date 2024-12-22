@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'net.hearnsoft.gensokyoradio.trd'
-    compileSdk 34
+    compileSdk 35
 
     def buildSerial = new SimpleDateFormat("MMddHHmm").format(new Date())
     def versionMajor = 1
@@ -14,8 +14,8 @@ android {
 
     defaultConfig {
         applicationId "net.hearnsoft.gensokyoradio.trd"
-        minSdk 26
-        targetSdk 34
+        minSdk 28
+        targetSdk 35
         versionCode 1
         versionName "${versionMajor}.${versionMinor}-${buildSerial}"
 
