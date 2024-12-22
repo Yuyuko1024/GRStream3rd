@@ -49,6 +49,8 @@
     <string name="song_item_btn_copy">Copy text…</string>
     <string name="song_item_btn_search_placeholder">Search <xliff:g id="text">%s</xliff:g></string>
     <string name="song_item_btn_copy_placeholder">Copy <xliff:g id="text">%s</xliff:g></string>
+    <string name="network_lost">Lost network…</string>
+    <string name="network_restored">Network connected</string>
     <string name="about_title">About App</string>
     <string name="about_content_text">GitHub <a href="https://github.com/Yuyuko1024">Junko Yuko</a> <br/><p>This is a third-party Android client that allows you to listen to <a href="https://gensokyoradio.net/">Gensokyo Radio</a>, a 24/7 internet radio station from <b>LunarSpotlight Media</b>.</p></string>
     <string name="about_content_copyright" translatable="false">

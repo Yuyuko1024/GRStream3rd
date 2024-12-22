@@ -134,4 +134,13 @@ public class SongDataModel extends ViewModel {
         return nowPlayingCircle;
     }
 
+    private MutableLiveData<Boolean> networkStatus;
+    public MutableLiveData<Boolean> getNetworkStatus() {
+        if (networkStatus == null) {
+            networkStatus = new MutableLiveData<>();
+            networkStatus.postValue(true);
+        }
+        return networkStatus;
+    }
+
 }
