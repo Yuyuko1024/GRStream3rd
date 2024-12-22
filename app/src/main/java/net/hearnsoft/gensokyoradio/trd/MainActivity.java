@@ -27,6 +27,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.Toast;
@@ -51,6 +52,8 @@ import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.progressindicator.CircularProgressIndicatorSpec;
+import com.google.android.material.progressindicator.IndeterminateDrawable;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -175,10 +178,19 @@ public class MainActivity extends AppCompatActivity
             }
         });
         songDataModel.getPlayerStatus().observe(this, isPlaying -> {
-            if (isPlaying) {
-                binding.play.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_pause, getTheme()));
+            // 检查是否正在缓冲
+            if (songDataModel.getBufferingState().getValue() != null &&
+                    songDataModel.getBufferingState().getValue() == 1) {
+                // 创建并设置圆形进度条
+                IndeterminateDrawable<CircularProgressIndicatorSpec> progressIndicator =
+                        IndeterminateDrawable.createCircularDrawable(this,
+                                new CircularProgressIndicatorSpec(this, null));
+                binding.play.setIcon(progressIndicator);
             } else {
-                binding.play.setIcon(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_play, getTheme()));
+                // 根据播放状态设置播放/暂停图标
+                binding.play.setIcon(ResourcesCompat.getDrawable(getResources(),
+                        isPlaying ? R.drawable.ic_pause : R.drawable.ic_play,
+                        getTheme()));
             }
         });
 
