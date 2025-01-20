@@ -70,22 +70,35 @@ public class SongHistoryDbHelper extends SQLiteOpenHelper {
     }
 
     public long insertSong(int songId, String title, String artist, String album, String circle, String coverUrl, int albumId) {
-        SQLiteDatabase db = getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(COLUMN_SONG_ID, songId);
-        contentValues.put(COLUMN_TITLE, title);
-        contentValues.put(COLUMN_ARTIST, artist);
-        contentValues.put(COLUMN_ALBUM, album);
-        contentValues.put(COLUMN_CIRCLE, circle);
-        contentValues.put(COLUMN_COVER_URL, coverUrl);
-        contentValues.put(COLUMN_ALBUM_ID, albumId);
-        contentValues.put(COLUMN_TIMESTAMP, System.currentTimeMillis()); // 设置当前时间戳
+    SQLiteDatabase db = getWritableDatabase();
 
-        long rowId = db.insert(TABLE_SONG, null, contentValues);
-        db.close();
-
-        return rowId;
+    // 检查上一条记录的songId是否与当前要写入的songId一致
+    String query = "SELECT " + COLUMN_SONG_ID + " FROM " + TABLE_SONG + " ORDER BY " + COLUMN_TIMESTAMP + " DESC LIMIT 1";
+    Cursor cursor = db.rawQuery(query, null);
+    if (cursor != null && cursor.moveToFirst()) {
+        int lastSongId = cursor.getInt(cursor.getColumnIndex(COLUMN_SONG_ID));
+        cursor.close();
+        if (lastSongId == songId) {
+            db.close();
+            return -1; // 跳过写入操作
+        }
     }
+
+    ContentValues contentValues = new ContentValues();
+    contentValues.put(COLUMN_SONG_ID, songId);
+    contentValues.put(COLUMN_TITLE, title);
+    contentValues.put(COLUMN_ARTIST, artist);
+    contentValues.put(COLUMN_ALBUM, album);
+    contentValues.put(COLUMN_CIRCLE, circle);
+    contentValues.put(COLUMN_COVER_URL, coverUrl);
+    contentValues.put(COLUMN_ALBUM_ID, albumId);
+    contentValues.put(COLUMN_TIMESTAMP, System.currentTimeMillis()); // 设置当前时间戳
+
+    long rowId = db.insert(TABLE_SONG, null, contentValues);
+    db.close();
+
+    return rowId;
+}
 
     public List<SongHistoryBean> getAllSongs() {
         List<SongHistoryBean> songList = new ArrayList<>();
