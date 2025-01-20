@@ -10,7 +10,7 @@ android {
 
     def buildSerial = new SimpleDateFormat("MMddHHmm").format(new Date())
     def versionMajor = 1
-    def versionMinor = 40
+    def versionMinor = 45
 
     defaultConfig {
         applicationId "net.hearnsoft.gensokyoradio.trd"
