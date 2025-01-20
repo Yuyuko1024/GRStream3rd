@@ -45,6 +45,7 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
+import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -329,63 +330,72 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
                             binding.cover.setImageDrawable(resource);
+                            int colorInt = Color.TRANSPARENT;
 
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                // Android 12+ 取色方法
                                 if (resource instanceof BitmapDrawable) {
                                     Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
                                     WallpaperColors colors = WallpaperColors.fromBitmap(bitmap);
 
                                     // 获取主色调
                                     Color primaryColor = colors.getPrimaryColor();
-                                    int colorInt = primaryColor.toArgb();
-
-                                    // 设置状态栏颜色 (220透明度)
-                                    int systemBarColor = ColorUtils.setAlphaComponent(colorInt, 220);
-                                    getWindow().setStatusBarColor(systemBarColor);
-
-                                    // 计算颜色亮度
-                                    double luminance = ColorUtils.calculateLuminance(colorInt);
-
-                                    // 根据亮度决定文字和图标颜色
-                                    int textIconColor = luminance > 0.5 ? Color.BLACK : Color.WHITE;
-
-                                    if (luminance > 0.5) {
-                                        // 亮色背景下，状态栏文字颜色为黑色
-                                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-                                    } else {
-                                        // 暗色背景下，状态栏文字颜色为白色
-                                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-                                    }
-
-                                    // 应用到 Toolbar
-                                    binding.topAppbar.setTitleTextColor(textIconColor);
-                                    binding.topAppbar.setNavigationIconTint(textIconColor);
-
-                                    // 更新菜单项图标颜色
-                                    Menu menu = binding.topAppbar.getMenu();
-                                    for (int i = 0; i < menu.size(); i++) {
-                                        MenuItem item = menu.getItem(i);
-                                        if (item.getIcon() != null) {
-                                            item.getIcon().setTint(textIconColor);
-                                        }
-                                    }
-
-                                    // Cover 渐变设置 - 使用更多的渐变点实现平滑过渡
-                                    GradientDrawable gradient = new GradientDrawable(
-                                            GradientDrawable.Orientation.TOP_BOTTOM,
-                                            new int[] {
-                                                    ColorUtils.setAlphaComponent(colorInt, 255),       // 顶部
-                                                    ColorUtils.setAlphaComponent(colorInt, 255),       // 顶部延续颜色以覆盖ActionBar
-                                                    ColorUtils.setAlphaComponent(colorInt, 200),       // 中部
-                                                    ColorUtils.setAlphaComponent(colorInt, 100),       // 中下部
-                                                    ColorUtils.setAlphaComponent(colorInt, 40),        // 下部
-                                                    ColorUtils.setAlphaComponent(colorInt, 0)          // 底部完全透明
-                                            }
-                                    );
-                                    if (binding.coverGradient != null) {
-                                        binding.coverGradient.setBackground(gradient);
-                                    }
+                                    colorInt = primaryColor.toArgb();
                                 }
+                            } else {
+                                // Android 11- 取色方法
+                                if (resource instanceof BitmapDrawable) {
+                                    Bitmap bitmap = ((BitmapDrawable) resource).getBitmap();
+                                    Palette palette = Palette.from(bitmap).generate();
+                                    colorInt = palette.getDominantColor(Color.TRANSPARENT);
+                                }
+                            }
+
+                            // 设置状态栏颜色 (220透明度)
+                            int systemBarColor = ColorUtils.setAlphaComponent(colorInt, 220);
+                            getWindow().setStatusBarColor(systemBarColor);
+
+                            // 计算颜色亮度
+                            double luminance = ColorUtils.calculateLuminance(colorInt);
+
+                            // 根据亮度决定文字和图标颜色
+                            int textIconColor = luminance > 0.5 ? Color.BLACK : Color.WHITE;
+
+                            if (luminance > 0.5) {
+                                // 亮色背景下，状态栏文字颜色为黑色
+                                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                            } else {
+                                // 暗色背景下，状态栏文字颜色为白色
+                                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                            }
+
+                            // 应用到 Toolbar
+                            binding.topAppbar.setTitleTextColor(textIconColor);
+                            binding.topAppbar.setNavigationIconTint(textIconColor);
+
+                            // 更新菜单项图标颜色
+                            Menu menu = binding.topAppbar.getMenu();
+                            for (int i = 0; i < menu.size(); i++) {
+                                MenuItem item = menu.getItem(i);
+                                if (item.getIcon() != null) {
+                                    item.getIcon().setTint(textIconColor);
+                                }
+                            }
+
+                            // Cover 渐变设置 - 使用更多的渐变点实现平滑过渡
+                            GradientDrawable gradient = new GradientDrawable(
+                                    GradientDrawable.Orientation.TOP_BOTTOM,
+                                    new int[] {
+                                            ColorUtils.setAlphaComponent(colorInt, 255),       // 顶部
+                                            ColorUtils.setAlphaComponent(colorInt, 255),       // 顶部延续颜色以覆盖ActionBar
+                                            ColorUtils.setAlphaComponent(colorInt, 200),       // 中部
+                                            ColorUtils.setAlphaComponent(colorInt, 100),       // 中下部
+                                            ColorUtils.setAlphaComponent(colorInt, 40),        // 下部
+                                            ColorUtils.setAlphaComponent(colorInt, 0)          // 底部完全透明
+                                    }
+                            );
+                            if (binding.coverGradient != null) {
+                                binding.coverGradient.setBackground(gradient);
                             }
                         }
 
