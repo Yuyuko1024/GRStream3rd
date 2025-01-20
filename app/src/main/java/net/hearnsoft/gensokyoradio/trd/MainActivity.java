@@ -30,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -351,10 +352,6 @@ public class MainActivity extends AppCompatActivity
                                 }
                             }
 
-                            // 设置状态栏颜色 (220透明度)
-                            int systemBarColor = ColorUtils.setAlphaComponent(colorInt, 220);
-                            getWindow().setStatusBarColor(systemBarColor);
-
                             // 计算颜色亮度
                             double luminance = ColorUtils.calculateLuminance(colorInt);
 
@@ -383,18 +380,47 @@ public class MainActivity extends AppCompatActivity
                             }
 
                             // Cover 渐变设置 - 使用更多的渐变点实现平滑过渡
-                            GradientDrawable gradient = new GradientDrawable(
-                                    GradientDrawable.Orientation.TOP_BOTTOM,
-                                    new int[] {
-                                            ColorUtils.setAlphaComponent(colorInt, 255),       // 顶部
-                                            ColorUtils.setAlphaComponent(colorInt, 255),       // 顶部延续颜色以覆盖ActionBar
-                                            ColorUtils.setAlphaComponent(colorInt, 200),       // 中部
-                                            ColorUtils.setAlphaComponent(colorInt, 100),       // 中下部
-                                            ColorUtils.setAlphaComponent(colorInt, 40),        // 下部
-                                            ColorUtils.setAlphaComponent(colorInt, 0)          // 底部完全透明
-                                    }
-                            );
-                            if (binding.coverGradient != null) {
+                            Configuration config = getResources().getConfiguration();
+                            int orientation = config.orientation;
+                            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                                // 横屏
+                                // 设置状态栏颜色 (100透明度)
+                                int systemBarColor = ColorUtils.setAlphaComponent(colorInt, 225);
+                                getWindow().setStatusBarColor(systemBarColor);
+
+                                GradientDrawable gradient = new GradientDrawable(
+                                        GradientDrawable.Orientation.LEFT_RIGHT,
+                                        new int[] {
+                                                ColorUtils.setAlphaComponent(colorInt, 255),  // 左侧
+                                                ColorUtils.setAlphaComponent(colorInt, 210),  // 左侧中部
+                                                ColorUtils.setAlphaComponent(colorInt, 180),   // 左侧中部
+                                                ColorUtils.setAlphaComponent(colorInt, 100),   // 中部
+                                                ColorUtils.setAlphaComponent(colorInt, 80),   // 右侧中部
+                                                ColorUtils.setAlphaComponent(colorInt, 0)     // 右侧完全透明
+                                        }
+                                );
+                                binding.coverGradient.setBackground(gradient);
+                                // 设置UI容器背景颜色
+                                binding.uiContainer.setBackgroundColor(colorInt);
+                                // 设置所有TextView的颜色
+                                setTextViewsColor((ViewGroup) binding.uiContainer, textIconColor);
+                            } else {
+                                // 竖屏
+                                // 设置状态栏颜色 (220透明度)
+                                int systemBarColor = ColorUtils.setAlphaComponent(colorInt, 220);
+                                getWindow().setStatusBarColor(systemBarColor);
+
+                                GradientDrawable gradient = new GradientDrawable(
+                                        GradientDrawable.Orientation.TOP_BOTTOM,
+                                        new int[] {
+                                                ColorUtils.setAlphaComponent(colorInt, 255),       // 顶部
+                                                ColorUtils.setAlphaComponent(colorInt, 255),       // 顶部延续颜色以覆盖ActionBar
+                                                ColorUtils.setAlphaComponent(colorInt, 200),       // 中部
+                                                ColorUtils.setAlphaComponent(colorInt, 100),       // 中下部
+                                                ColorUtils.setAlphaComponent(colorInt, 40),        // 下部
+                                                ColorUtils.setAlphaComponent(colorInt, 0)          // 底部完全透明
+                                        }
+                                );
                                 binding.coverGradient.setBackground(gradient);
                             }
                         }
@@ -407,6 +433,20 @@ public class MainActivity extends AppCompatActivity
             //showProgress();
             songDataModel.getPlayBtnStatus().postValue(true);
         });
+    }
+
+    /**
+     * 递归遍历ViewGroup并设置所有TextView的颜色
+     */
+    private void setTextViewsColor(ViewGroup viewGroup, int color) {
+        for (int i = 0; i < viewGroup.getChildCount(); i++) {
+            View child = viewGroup.getChildAt(i);
+            if (child instanceof TextView) {
+                ((TextView) child).setTextColor(color);
+            } else if (child instanceof ViewGroup) {
+                setTextViewsColor((ViewGroup) child, color);
+            }
+        }
     }
 
     private void buildNowPlayingDialog() {
