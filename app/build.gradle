@@ -16,7 +16,7 @@ android {
         applicationId "net.hearnsoft.gensokyoradio.trd"
         minSdk 28
         targetSdk 35
-        versionCode 1
+        versionCode buildSerial.toInteger()
         versionName "${versionMajor}.${versionMinor}-${buildSerial}"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
