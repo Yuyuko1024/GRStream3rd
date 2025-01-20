@@ -349,6 +349,14 @@ public class MainActivity extends AppCompatActivity
                                     // 根据亮度决定文字和图标颜色
                                     int textIconColor = luminance > 0.5 ? Color.BLACK : Color.WHITE;
 
+                                    if (luminance > 0.5) {
+                                        // 亮色背景下，状态栏文字颜色为黑色
+                                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+                                    } else {
+                                        // 暗色背景下，状态栏文字颜色为白色
+                                        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+                                    }
+
                                     // 应用到 Toolbar
                                     binding.topAppbar.setTitleTextColor(textIconColor);
                                     binding.topAppbar.setNavigationIconTint(textIconColor);
