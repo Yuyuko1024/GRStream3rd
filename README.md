@@ -17,4 +17,4 @@ Gensokyo Radio 3rd Eyes is a third-party open-source Android client for the [Gen
 ### Screenshots
 | Mobile UI | Automotive UI |
 |-----------|---------------|
-| <img src="screenshots/Screenshot_20250128-175637.png" width="300" alt="Mobile Interface"/> | <img src="screenshots/Screenshot_20250128-175757.png" width="300" alt="Automotive Interface"/> |
+| <img src="screenshots/Screenshot_20250128-175637.%E5%B9%BB%E6%83%B3%E7%94%B5%E5%8F%B0.png" width="300" alt="Mobile Interface"/> | <img src="screenshots/Screenshot_20250128-175757.png" width="300" alt="Automotive Interface"/> |
