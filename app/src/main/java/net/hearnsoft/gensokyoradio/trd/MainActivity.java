@@ -1,13 +1,11 @@
 package net.hearnsoft.gensokyoradio.trd;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.WallpaperColors;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -18,9 +16,6 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,7 +31,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.compose.material3.ColorScheme;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.ColorUtils;
@@ -48,11 +42,11 @@ import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
 import androidx.palette.graphics.Palette;
 
+import com.blankj.utilcode.util.SPStaticUtils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import com.google.android.material.color.DynamicColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.progressindicator.CircularProgressIndicatorSpec;
 import com.google.android.material.progressindicator.IndeterminateDrawable;
@@ -70,10 +64,8 @@ import net.hearnsoft.gensokyoradio.trd.service.GRStreamPlayerService;
 import net.hearnsoft.gensokyoradio.trd.service.WebSocketService;
 import net.hearnsoft.gensokyoradio.trd.service.WsServiceInterface;
 import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
-import net.hearnsoft.gensokyoradio.trd.utils.CarUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.GlobalTimer;
-import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.TimerUpdateListener;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.widgets.SettingsSheetDialog;
@@ -245,8 +237,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initVisualizer() {
-        boolean showVisualizer = SettingsPrefUtils.getInstance(this)
-                .readBooleanSettings("visualizer");
+        boolean showVisualizer = SPStaticUtils.getBoolean("visualizer", false);
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO)
                 == PackageManager.PERMISSION_GRANTED) {
             if (showVisualizer) {
@@ -256,7 +247,7 @@ public class MainActivity extends AppCompatActivity
             songDataModel.getVisualizerUsable().postValue(showVisualizer);
         } else {
             if (showVisualizer) {
-                SettingsPrefUtils.getInstance(this).writeBooleanSettings("visualizer", false);
+                SPStaticUtils.put("visualizer", false);
             }
             songDataModel.getVisualizerUsable().postValue(false);
         }
@@ -292,16 +283,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showNoticeDialog() {
-        if (!SettingsPrefUtils.getInstance(this)
-                .readBooleanSettings("showed_notice_dialog")) {
+        if (!SPStaticUtils.getBoolean("showed_notice_dialog", false)) {
             DialogNoticeBinding dialogBinding = DialogNoticeBinding.inflate(getLayoutInflater());
             new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.notice_titie)
                     .setMessage(R.string.dialog_notice_message)
                     .setView(dialogBinding.getRoot())
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                        SettingsPrefUtils.getInstance(MainActivity.this)
-                                        .writeBooleanSettings("showed_notice_dialog", true);
+                        SPStaticUtils.put("showed_notice_dialog", true);
                         dialog.dismiss();
                     })
                     .show();
@@ -527,8 +516,8 @@ public class MainActivity extends AppCompatActivity
             dialog.show(getSupportFragmentManager(), "history");
             fragmentArrayList.add(dialog);
         } else if (item.getItemId() == R.id.menu_login) {
-            if (SettingsPrefUtils.getInstance(this)
-                    .readStringSettings(Constants.PREF_APPSESSIONID_KEY) == null) {
+            if (!SPStaticUtils.contains(Constants.PREF_APPSESSIONID_KEY) ||
+                        !SPStaticUtils.contains(Constants.PREF_API_KEY)) {
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
             } else {

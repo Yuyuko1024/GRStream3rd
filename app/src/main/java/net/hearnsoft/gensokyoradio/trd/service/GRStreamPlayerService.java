@@ -19,9 +19,10 @@ import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.session.DefaultMediaNotificationProvider;
-import androidx.media3.session.MediaNotification;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
+
+import com.blankj.utilcode.util.SPStaticUtils;
 
 import net.hearnsoft.gensokyoradio.trd.BuildConfig;
 import net.hearnsoft.gensokyoradio.trd.MainActivity;
@@ -29,7 +30,6 @@ import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.utils.AudioSessionManager;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
-import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 
 public class GRStreamPlayerService extends MediaSessionService {
@@ -166,8 +166,7 @@ public class GRStreamPlayerService extends MediaSessionService {
         String artist = dataModel.getArtist().getValue();
         String uri = dataModel.getCoverUrl().getValue();
         String media_uri;
-        switch (SettingsPrefUtils.getInstance(this)
-                .readIntSettings("server")) {
+        switch (SPStaticUtils.getInt("server")) {
             case 1:
                 media_uri = Constants.GR_STREAM_URL_MOBILE;
                 break;
@@ -175,8 +174,8 @@ public class GRStreamPlayerService extends MediaSessionService {
                 media_uri = Constants.GR_STREAM_URL_ENHANCED;
                 break;
             case 3:
-                media_uri = SettingsPrefUtils.getInstance(this)
-                        .readStringSettings("custom_server", Constants.GR_STREAM_URL_DEFAULT);
+                media_uri = SPStaticUtils.getString("custom_server",
+                        Constants.GR_STREAM_URL_DEFAULT);
                 break;
             case 0:
             default:

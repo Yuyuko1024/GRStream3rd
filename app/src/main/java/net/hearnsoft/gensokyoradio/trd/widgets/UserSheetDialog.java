@@ -9,10 +9,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.blankj.utilcode.util.SPStaticUtils;
+
 import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.databinding.UserSheetBinding;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
-import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
 
 public class UserSheetDialog extends BaseSheetDialog {
     private final String TAG = this.getClass().getSimpleName();
@@ -31,19 +32,23 @@ public class UserSheetDialog extends BaseSheetDialog {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        SettingsPrefUtils prefs = SettingsPrefUtils.getInstance(requireContext());
         binding.usernameText.setText(
-                prefs.readStringSettings(Constants.PREF_USERNAME_KEY)
+                SPStaticUtils.getString(Constants.PREF_USERNAME_KEY)
         );
         binding.useridText.setText(
-                prefs.readStringSettings(Constants.PREF_USERID_KEY)
+                SPStaticUtils.getString(Constants.PREF_USERID_KEY)
         );
 
         binding.logoutButton.setOnClickListener(v -> {
-            if (prefs.removeSettings(Constants.PREF_USERNAME_KEY) &&
-                prefs.removeSettings(Constants.PREF_USERID_KEY) &&
-                prefs.removeSettings(Constants.PREF_APPSESSIONID_KEY) &&
-                prefs.removeSettings(Constants.PREF_API_KEY)) {
+            SPStaticUtils.remove(Constants.PREF_USERID_KEY);
+            SPStaticUtils.remove(Constants.PREF_USERNAME_KEY);
+            SPStaticUtils.remove(Constants.PREF_APPSESSIONID_KEY);
+            SPStaticUtils.remove(Constants.PREF_API_KEY);
+
+            if (!SPStaticUtils.contains(Constants.PREF_USERID_KEY) &&
+                    !SPStaticUtils.contains(Constants.PREF_USERNAME_KEY) &&
+                    !SPStaticUtils.contains(Constants.PREF_APPSESSIONID_KEY) &&
+                    !SPStaticUtils.contains(Constants.PREF_API_KEY)) {
                 Toast.makeText(requireContext(), R.string.user_sheet_logout_success, Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(requireContext(), R.string.user_sheet_logout_err, Toast.LENGTH_SHORT).show();

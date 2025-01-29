@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.blankj.utilcode.util.SPStaticUtils;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import net.hearnsoft.gensokyoradio.trd.BuildConfig;
@@ -21,7 +22,7 @@ import net.hearnsoft.gensokyoradio.trd.R;
 import net.hearnsoft.gensokyoradio.trd.databinding.SettingsEditServerBinding;
 import net.hearnsoft.gensokyoradio.trd.databinding.SettingsSheetBinding;
 import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
-import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
+import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 
 import pub.devrel.easypermissions.EasyPermissions;
@@ -52,14 +53,11 @@ public class SettingsSheetDialog extends BaseSheetDialog {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view,savedInstanceState);
-        int clientId = SettingsPrefUtils.getInstance(context)
-                        .readIntSettings("clientId");
-        boolean visualizerEnabled = SettingsPrefUtils.getInstance(context)
-                .readBooleanSettings("visualizer");
+        int clientId = SPStaticUtils.getInt(Constants.PREF_CLIENT_ID, 0);
+        boolean visualizerEnabled = SPStaticUtils.getBoolean(Constants.PREF_VISUALIZER, false);
         binding.socketId.setText(String.valueOf(clientId));
         binding.settingsVisualizerSwitch.setChecked(visualizerEnabled);
-        switch (SettingsPrefUtils.getInstance(context)
-                .readIntSettings("server")) {
+        switch (SPStaticUtils.getInt(Constants.PREF_SERVER, 0)) {
             case 1:
                 serverName = getString(R.string.server_mobile);
                 break;
@@ -96,8 +94,7 @@ public class SettingsSheetDialog extends BaseSheetDialog {
         String perm = Manifest.permission.RECORD_AUDIO;
         boolean checked = binding.settingsVisualizerSwitch.isChecked();
         if (EasyPermissions.hasPermissions(context, perm)) {
-            SettingsPrefUtils.getInstance(context)
-                    .writeBooleanSettings("visualizer", checked);
+            SPStaticUtils.put(Constants.PREF_VISUALIZER, checked);
             songDataModel.getShowVisualizer().postValue(checked);
         } else {
             EasyPermissions.requestPermissions(requireActivity(), getString(R.string.perm_need_record),
@@ -105,12 +102,10 @@ public class SettingsSheetDialog extends BaseSheetDialog {
             if (EasyPermissions.somePermissionDenied(requireActivity(), perm)) {
                 if (DEBUG) Log.e(TAG, "record permission denied.");
                 Toast.makeText(context, R.string.perm_denied_record, Toast.LENGTH_SHORT).show();
-                SettingsPrefUtils.getInstance(context)
-                        .writeBooleanSettings("visualizer", false);
+                SPStaticUtils.put(Constants.PREF_VISUALIZER, false);
                 songDataModel.getShowVisualizer().postValue(false);
             } else {
-                SettingsPrefUtils.getInstance(context)
-                        .writeBooleanSettings("visualizer", checked);
+                SPStaticUtils.put(Constants.PREF_VISUALIZER, checked);
                 songDataModel.getShowVisualizer().postValue(checked);
             }
         }
@@ -161,18 +156,18 @@ public class SettingsSheetDialog extends BaseSheetDialog {
     }
 
     private void writeIntSettings(String key, int value) {
-        SettingsPrefUtils.getInstance(context).writeIntSettings(key, value);
+        SPStaticUtils.put(key, value);
     }
 
     private void writeStringSettings(String key, String value) {
-        SettingsPrefUtils.getInstance(context).writeStringSettings(key, value);
+        SPStaticUtils.put(key, value);
     }
 
     private String getStringPref(String key) {
-        return SettingsPrefUtils.getInstance(context).readStringSettings(key);
+        return SPStaticUtils.getString(key);
     }
 
     private int getIntPref(String key) {
-        return SettingsPrefUtils.getInstance(context).readIntSettings(key);
+        return SPStaticUtils.getInt(key);
     }
 }

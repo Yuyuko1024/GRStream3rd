@@ -5,9 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.Network;
-import android.net.NetworkCapabilities;
-import android.net.NetworkRequest;
-import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -17,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import com.blankj.utilcode.util.SPStaticUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -30,7 +28,6 @@ import net.hearnsoft.gensokyoradio.trd.model.SongDataModel;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
 import net.hearnsoft.gensokyoradio.trd.utils.GlobalTimer;
 import net.hearnsoft.gensokyoradio.trd.utils.NullStringToEmptyAdapterFactory;
-import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.ws.GRWebSocketClient;
 
@@ -206,7 +203,7 @@ public class WebSocketService extends Service {
                     SocketClientBeans clientBeans = gson.fromJson(message, SocketClientBeans.class);
                     clientId = clientBeans.id;
                     Log.d(TAG, "get Client ID: " + clientId);
-                    SettingsPrefUtils.getInstance(this).writeIntSettings("clientId", clientId);
+                    SPStaticUtils.put(Constants.PREF_CLIENT_ID, clientId);
                 } else if (message.equals("{\"message\":\"ping\"}")) {
                     Log.d(TAG, "get ping! send pong!");
                     sendPong();

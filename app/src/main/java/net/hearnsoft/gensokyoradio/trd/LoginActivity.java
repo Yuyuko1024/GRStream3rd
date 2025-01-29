@@ -15,6 +15,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.blankj.utilcode.util.SPStaticUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -22,7 +23,6 @@ import com.google.gson.reflect.TypeToken;
 import net.hearnsoft.gensokyoradio.trd.beans.LoginDataBean;
 import net.hearnsoft.gensokyoradio.trd.databinding.ActivityLoginBinding;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
-import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
 import net.hearnsoft.gensokyoradio.trd.widgets.LoginLoadingDialog;
 
 import java.io.IOException;
@@ -155,11 +155,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void saveLoginData(LoginDataBean login) {
-        SettingsPrefUtils pref = SettingsPrefUtils.getInstance(this);
-        pref.writeStringSettings(Constants.PREF_USERNAME_KEY, login.getUSERNAME());
-        pref.writeStringSettings(Constants.PREF_USERID_KEY, login.getUSERID());
-        pref.writeStringSettings(Constants.PREF_APPSESSIONID_KEY, login.getAPPSESSIONID());
-        pref.writeStringSettings(Constants.PREF_API_KEY, login.getAPI());
+        SPStaticUtils.put(Constants.PREF_USERNAME_KEY, login.getUSERNAME());
+        SPStaticUtils.put(Constants.PREF_USERID_KEY, login.getUSERID());
+        SPStaticUtils.put(Constants.PREF_APPSESSIONID_KEY, login.getAPPSESSIONID());
+        SPStaticUtils.put(Constants.PREF_API_KEY, login.getAPI());
     }
 
     private void showError(String message) {
