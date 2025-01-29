@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class GlobalTimer {
     private static final String TAG = GlobalTimer.class.getSimpleName();
     private static GlobalTimer instance;
-    private Timer timer;
+    private static Timer timer;
     private final ArrayList<TimerUpdateListener> listeners = new ArrayList<>();
     private boolean isUpdateProgress = false;
     private int duration;
@@ -63,6 +63,8 @@ public class GlobalTimer {
     public void stopTimer() {
         isUpdateProgress = false;
         timer.cancel();
+        timer.purge();
+        timer = null;
     }
 
     public void addListener(TimerUpdateListener listener) {
