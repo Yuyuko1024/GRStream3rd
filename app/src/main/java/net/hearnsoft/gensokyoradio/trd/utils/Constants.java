@@ -14,6 +14,10 @@ public class Constants {
     public static final String GR_STREAM_URL_ENHANCED = "https://stream.gensokyoradio.net/3";
 
     public static final String PREF_GLOBAL_NAME = "gr_3rd";
+    public static final String PREF_USERNAME_KEY = "username";
+    public static final String PREF_USERID_KEY = "userid";
+    public static final String PREF_APPSESSIONID_KEY = "appsessionid";
+    public static final String PREF_API_KEY = "api";
 
     public static final String GR_LOGIN_API_URL = "https://gensokyoradio.net/api/login/";
     public static final String GR_REGISTER_URL = "https://gensokyoradio.net/register";

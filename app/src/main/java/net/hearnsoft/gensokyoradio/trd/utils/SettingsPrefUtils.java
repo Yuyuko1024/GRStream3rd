@@ -53,4 +53,9 @@ public class SettingsPrefUtils {
         return editor.commit();
     }
 
+    public boolean removeSettings(String key) {
+        editor.remove(key);
+        return editor.commit();
+    }
+
 }

@@ -69,4 +69,9 @@ Gensokyo Radio and the Musical Torii logo are trademarks of Gensokyo Radio / Lun
     <string name="login_error_invalid">Login info invalid</string>
     <string name="login_error_network">Network error</string>
     <string name="login_error_server">Server response error</string>
+    <string name="user_sheet_username_text_title">Username</string>
+    <string name="user_sheet_userid_text_title">User ID</string>
+    <string name="user_sheet_logout">Logout</string>
+    <string name="user_sheet_logout_success">Logout success</string>
+    <string name="user_sheet_logout_err">Logout error</string>
 </resources>

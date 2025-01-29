@@ -78,6 +78,7 @@ import net.hearnsoft.gensokyoradio.trd.utils.TimerUpdateListener;
 import net.hearnsoft.gensokyoradio.trd.utils.ViewModelUtils;
 import net.hearnsoft.gensokyoradio.trd.widgets.SettingsSheetDialog;
 import net.hearnsoft.gensokyoradio.trd.widgets.SongHistorySheetDialog;
+import net.hearnsoft.gensokyoradio.trd.widgets.UserSheetDialog;
 import net.hearnsoft.gensokyoradio.trd.widgets.VisualizerView;
 
 import java.io.IOException;
@@ -526,8 +527,15 @@ public class MainActivity extends AppCompatActivity
             dialog.show(getSupportFragmentManager(), "history");
             fragmentArrayList.add(dialog);
         } else if (item.getItemId() == R.id.menu_login) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+            if (SettingsPrefUtils.getInstance(this)
+                    .readStringSettings(Constants.PREF_APPSESSIONID_KEY) == null) {
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+            } else {
+                UserSheetDialog dialog = new UserSheetDialog();
+                dialog.show(getSupportFragmentManager(), "user");
+                fragmentArrayList.add(dialog);
+            }
         }
         return super.onOptionsItemSelected(item);
     }

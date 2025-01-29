@@ -63,4 +63,9 @@
     <string name="login_error_invalid">登录信息有误</string>
     <string name="login_error_network">网络问题</string>
     <string name="login_error_server">服务器响应问题</string>
+    <string name="user_sheet_username_text_title">用户名</string>
+    <string name="user_sheet_userid_text_title">用户 ID</string>
+    <string name="user_sheet_logout">注销登录</string>
+    <string name="user_sheet_logout_success">注销登录成功</string>
+    <string name="user_sheet_logout_err">注销登录出错</string>
 </resources>

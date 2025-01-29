@@ -22,6 +22,7 @@ import com.google.gson.reflect.TypeToken;
 import net.hearnsoft.gensokyoradio.trd.beans.LoginDataBean;
 import net.hearnsoft.gensokyoradio.trd.databinding.ActivityLoginBinding;
 import net.hearnsoft.gensokyoradio.trd.utils.Constants;
+import net.hearnsoft.gensokyoradio.trd.utils.SettingsPrefUtils;
 import net.hearnsoft.gensokyoradio.trd.widgets.LoginLoadingDialog;
 
 import java.io.IOException;
@@ -154,13 +155,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void saveLoginData(LoginDataBean login) {
-        getSharedPreferences(Constants.PREF_GLOBAL_NAME, MODE_PRIVATE)
-                .edit()
-                .putString("username", login.getUSERNAME())
-                .putString("userid", login.getUSERID())
-                .putString("appsessionid", login.getAPPSESSIONID())
-                .putString("api", login.getAPI())
-                .apply();
+        SettingsPrefUtils pref = SettingsPrefUtils.getInstance(this);
+        pref.writeStringSettings(Constants.PREF_USERNAME_KEY, login.getUSERNAME());
+        pref.writeStringSettings(Constants.PREF_USERID_KEY, login.getUSERID());
+        pref.writeStringSettings(Constants.PREF_APPSESSIONID_KEY, login.getAPPSESSIONID());
+        pref.writeStringSettings(Constants.PREF_API_KEY, login.getAPI());
     }
 
     private void showError(String message) {
