@@ -4,15 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="wrap_content"
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:id="@+id/play_badge"
-        android:scaleType="fitCenter"
-        android:adjustViewBounds="true"
-        android:layout_gravity="center_horizontal"
-        android:src="@drawable/google_play_badge"
-        android:contentDescription="@string/play_badge_content_desc" />
+        android:layout_margin="8dp"
+        android:id="@+id/webapp_link"
+        android:text="@string/web_app_desc" />
 
 </LinearLayout>

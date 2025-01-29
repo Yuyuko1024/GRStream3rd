@@ -1,5 +1,7 @@
 package net.hearnsoft.gensokyoradio.trd.utils;
 
+import android.net.Uri;
+
 public class Constants {
 
     public static final String WS_URL = "wss://gensokyoradio.net/wss";
@@ -17,7 +19,8 @@ public class Constants {
     public static final String GR_REGISTER_URL = "https://gensokyoradio.net/register";
     public static final String GR_FORGOT_PASSWORD_URL = "https://gensokyoradio.net/account/recover";
 
-    public static final String PREF_GLOBAL_NAME = "gr_3rd";
+    public static final Uri GR_PWA_APP_URL = Uri.parse("https://app.gensokyoradio.net/");
+
     public static final String PREF_USERNAME_KEY = "username";
     public static final String PREF_USERID_KEY = "userid";
     public static final String PREF_APPSESSIONID_KEY = "appsessionid";

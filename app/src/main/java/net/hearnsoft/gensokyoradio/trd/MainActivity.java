@@ -283,26 +283,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showNoticeDialog() {
-        if (!SPStaticUtils.getBoolean("showed_notice_dialog", false)) {
+        if (!SPStaticUtils.getBoolean(Constants.PREF_SHOWED_NOTICE_DIALOG, false)) {
             DialogNoticeBinding dialogBinding = DialogNoticeBinding.inflate(getLayoutInflater());
             new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.notice_titie)
                     .setMessage(R.string.dialog_notice_message)
                     .setView(dialogBinding.getRoot())
                     .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                        SPStaticUtils.put("showed_notice_dialog", true);
+                        SPStaticUtils.put(Constants.PREF_SHOWED_NOTICE_DIALOG, true);
                         dialog.dismiss();
                     })
                     .show();
-            dialogBinding.playBadge.setOnClickListener(v -> {
+            dialogBinding.webappLink.setOnClickListener(v -> {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("market://details?id=net.gensokyoradio.app"));
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
-                } else {
-                    intent.setData(Uri.parse("https://play.google.com/store/apps/details?id=net.gensokyoradio.app"));
-                    startActivity(intent);
-                }
+                intent.setData(Constants.GR_PWA_APP_URL);
+                startActivity(intent);
             });
         }
     }

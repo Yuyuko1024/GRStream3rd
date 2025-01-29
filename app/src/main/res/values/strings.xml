@@ -1,7 +1,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">Gensokyo Radio 3rd Eyes</string>
-    <string name="dialog_notice_message">As you can see, this is a Fan-made third-party Gensokyo Radio client. A simple radio client using Material Design 3 components and AndroidX Media 3 supports some of the latest Android features. However, it only supports streaming up to 256kbps mp3 streams. If you want to support Gensokyo Radio, please click the badge below to go to Google Play and download the full version of the official App to enjoy higher quality streaming media and more features!</string>
-    <string name="play_badge_content_desc">Get Full version App on Google Play</string>
+    <string name="dialog_notice_message">As you can see, this is a Fan-made third-party Gensokyo Radio client. A simple radio client using Material Design 3 components and AndroidX Media 3 supports some of the latest Android features. However, it only supports streaming up to 256kbps mp3 streams. If you want to support Gensokyo Radio, please click the button below to go to Web App (beta) to enjoy higher quality streaming media and more features!</string>
+    <string name="web_app_desc" translatable="false">Web App (beta)</string>
     <string name="fetch_song_data_toast">Fetching song info…</string>
     <string name="notice_titie">Notice</string>
     <string name="stream_resume_toast">Play stream resume.</string>
