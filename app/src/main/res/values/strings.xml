@@ -58,4 +58,15 @@
 Touhou Project is © Team Shanghai Alice / ZUN \n\n
 Gensokyo Radio and the Musical Torii logo are trademarks of Gensokyo Radio / LunarSpotlight Media
     </string>
+    <string name="login_title">Log in to Gensokyo Radio</string>
+    <string name="login_activity_title">Login</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="login_create_account">Create Account</string>
+    <string name="login_forgot_password">Forgot Password</string>
+    <string name="login_button">@string/login_activity_title</string>
+    <string name="login_error_empty">Empty string</string>
+    <string name="login_error_invalid">Login info invalid</string>
+    <string name="login_error_network">Network error</string>
+    <string name="login_error_server">Server response error</string>
 </resources>

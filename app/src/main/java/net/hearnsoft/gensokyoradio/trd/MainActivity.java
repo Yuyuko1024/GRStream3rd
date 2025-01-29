@@ -525,6 +525,9 @@ public class MainActivity extends AppCompatActivity
             SongHistorySheetDialog dialog = new SongHistorySheetDialog(this);
             dialog.show(getSupportFragmentManager(), "history");
             fragmentArrayList.add(dialog);
+        } else if (item.getItemId() == R.id.menu_login) {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }

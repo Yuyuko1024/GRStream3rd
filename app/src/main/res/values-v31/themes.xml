@@ -45,4 +45,11 @@
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="colorAccent">@color/material_dynamic_neutral70</item>
     </style>
+
+    <style name="Material3EditText" parent="ThemeOverlay.Material3.TextInputEditText.FilledBox">
+        <item name="boxCornerRadiusTopStart">24dp</item>
+        <item name="boxCornerRadiusTopEnd">24dp</item>
+        <item name="boxCornerRadiusBottomStart">24dp</item>
+        <item name="boxCornerRadiusBottomEnd">24dp</item>
+    </style>
 </resources>

@@ -15,4 +15,7 @@ public class Constants {
 
     public static final String PREF_GLOBAL_NAME = "gr_3rd";
 
+    public static final String GR_LOGIN_API_URL = "https://gensokyoradio.net/api/login/";
+    public static final String GR_REGISTER_URL = "https://gensokyoradio.net/register";
+    public static final String GR_FORGOT_PASSWORD_URL = "https://gensokyoradio.net/account/recover";
 }

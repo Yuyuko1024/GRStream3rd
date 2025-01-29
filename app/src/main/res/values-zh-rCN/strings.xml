@@ -52,4 +52,15 @@
     <string name="network_restored">网络连接已恢复</string>
     <string name="about_title">关于 App</string>
     <string name="about_content_text">GitHub <a href="https://github.com/Yuyuko1024">Junko Yuko</a> <br/><p>这是一款可以收听来自美国东方同人社团 <b>LunarSpotlight Media</b> 的全天候网络电台 <a href="https://gensokyoradio.net/">Gensokyo Radio</a> 的第三方Android客户端。</p></string>
+    <string name="login_title">登录至 Gensokyo Radio</string>
+    <string name="login_activity_title">登录</string>
+    <string name="login_username">用户名</string>
+    <string name="login_password">密码</string>
+    <string name="login_create_account">创建账户</string>
+    <string name="login_forgot_password">忘记密码</string>
+    <string name="login_button">@string/login_activity_title</string>
+    <string name="login_error_empty">空项目</string>
+    <string name="login_error_invalid">登录信息有误</string>
+    <string name="login_error_network">网络问题</string>
+    <string name="login_error_server">服务器响应问题</string>
 </resources>
