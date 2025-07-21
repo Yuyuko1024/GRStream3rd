@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">幻想电台</string>
+    <string name="dialog_notice_message">如你所见，这是一个Fan-made第三方Gensokyo Radio客户端。使用Material Design 3组件和AndroidX Media 3组成了一个简单的电台客户端，支持部分最新的Android功能。不过仅支持串流播放最高 256kbps mp3串流。如果你想支持Gensokyo Radio，请点击下方的按钮进入官方 beta 版本 Web App 以享受更高质量的流媒体以及更多功能！</string>
+    <string name="fetch_song_data_toast">正在获取当前播放的歌曲信息…</string>
+    <string name="notice_titie">提示</string>
+    <string name="stream_resume_toast">电台播放恢复</string>
+    <string name="stream_stop_toast">电台播放停止</string>
+    <string name="song_info_title">当前音乐信息</string>
+    <string name="info_title">标题</string>
+    <string name="info_artist">编曲/演唱</string>
+    <string name="info_album">专辑</string>
+    <string name="info_years">年份</string>
+    <string name="info_circle">社团</string>
+    <string name="info_unknown">未知</string>
+    <string name="settings_socket_client_id_title">终端会话ID</string>
+    <string name="settings_server_using">电台服务器</string>
+    <string name="settings_edit_server_title">修改服务器</string>
+    <string name="settings_ui_visualizer_title">音频可视化</string>
+    <string name="settings_ui_visualizer_desc">音频可视化需要使用录音权限来进行应用自身内录。放心，该功能不会涉及您的任何隐私。</string>
+    <string name="perm_need_basic">需要基本权限。</string>
+    <string name="perm_need_record">需要录音权限。</string>
+    <string name="perm_denied_record">录音权限被拒绝。</string>
+    <string name="menu_settings_title">设置</string>
+    <string name="server_default">默认网页端服务器 （128kbps）</string>
+    <string name="server_mobile">移动端服务器（64kbps）</string>
+    <string name="server_enhanced">增强服务器（256kbps）</string>
+    <string name="server_custom">自定义服务器</string>
+    <string name="settings_saved_toast">设置将会在下次启动或下次元数据更新时应用</string>
+    <string name="status_idle">空闲</string>
+    <string name="status_buffering">正在缓冲</string>
+    <string name="status_ready">就绪</string>
+    <string name="song_history_title">播放历史记录</string>
+    <string name="datetime_format">yyyy年MM月dd日 HH:mm</string>
+    <string name="item_str_circle">社团：<xliff:g id="circle">%s</xliff:g></string>
+    <string name="item_str_artists">编曲/演唱：<xliff:g id="artists">%s</xliff:g></string>
+    <string name="item_str_album">专辑：<xliff:g id="album">%s</xliff:g></string>
+    <string name="clear_history_text">清空历史记录</string>
+    <string name="no_data_hint">这里什么都没有，就像⑨的脑袋一样。</string>
+    <string name="clear_history_msg">确认清空历史记录？</string>
+    <string name="history_cleared_toast">历史记录已清空</string>
+    <string name="socket_error_server_msg">ERROR: 收到服务器的错误信息: \n</string>
+    <string name="socket_error_json_data">ERROR: JSON数据出错!</string>
+    <string name="socket_error_reconnect">ERROR: Socket连接意外断开！正在重试次数： </string>
+    <string name="song_item_info_footer_tips">可以长按文本来复制其中的文字。</string>
+    <string name="song_item_btn_search">在 THBWiki 中搜索…</string>
+    <string name="song_item_btn_copy">复制文本…</string>
+    <string name="song_item_btn_search_placeholder">搜索 <xliff:g id="text">%s</xliff:g></string>
+    <string name="song_item_btn_copy_placeholder">复制 <xliff:g id="text">%s</xliff:g></string>
+    <string name="network_lost">网络连接丢失</string>
+    <string name="network_restored">网络连接已恢复</string>
+    <string name="about_title">关于 App</string>
+    <string name="about_content_text">GitHub <a href="https://github.com/Yuyuko1024">Junko Yuko</a> <br/><p>这是一款可以收听来自美国东方同人社团 <b>LunarSpotlight Media</b> 的全天候网络电台 <a href="https://gensokyoradio.net/">Gensokyo Radio</a> 的第三方Android客户端。</p></string>
+    <string name="login_title">登录至 Gensokyo Radio</string>
+    <string name="login_activity_title">登录</string>
+    <string name="login_username">用户名</string>
+    <string name="login_password">密码</string>
+    <string name="login_create_account">创建账户</string>
+    <string name="login_forgot_password">忘记密码</string>
+    <string name="login_button">@string/login_activity_title</string>
+    <string name="login_error_empty">空项目</string>
+    <string name="login_error_invalid">登录信息有误</string>
+    <string name="login_error_network">网络问题</string>
+    <string name="login_error_server">服务器响应问题</string>
+    <string name="user_sheet_username_text_title">用户名</string>
+    <string name="user_sheet_userid_text_title">用户 ID</string>
+    <string name="user_sheet_logout">注销登录</string>
+    <string name="user_sheet_logout_success">注销登录成功</string>
+    <string name="user_sheet_logout_err">注销登录出错</string>
+    <string name="song_history_online">在线记录</string>
+    <string name="song_history_local">本地记录</string>
+    <string name="online_history_time_less_min"><xliff:g id="text">%s</xliff:g> 秒前</string>
+    <string name="online_history_time_one_min">1 分钟之前</string>
+    <string name="online_history_time_mins">播放于 <xliff:g id="text">%s</xliff:g> 分钟前</string>
+    <string name="settings_title_cover_quality">专辑封面图片质量</string>
+    <string name="song_rate_dialog_title">评分这首歌</string>
+    <string name="song_rate_success">感谢您的评分！</string>
+    <string name="song_rate_error">评分失败</string>
+    <string name="network_connecting">网络正在连接...</string>
+</resources>

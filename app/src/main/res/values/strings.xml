@@ -1,0 +1,87 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">Gensokyo Radio 3rd Eyes</string>
+    <string name="dialog_notice_message">As you can see, this is a Fan-made third-party Gensokyo Radio client. A simple radio client using Material Design 3 components and AndroidX Media 3 supports some of the latest Android features. However, it only supports streaming up to 256kbps mp3 streams. If you want to support Gensokyo Radio, please click the button below to go to Web App (beta) to enjoy higher quality streaming media and more features!</string>
+    <string name="web_app_desc" translatable="false">Web App (beta)</string>
+    <string name="fetch_song_data_toast">Fetching song info…</string>
+    <string name="notice_titie">Notice</string>
+    <string name="stream_resume_toast">Play stream resume.</string>
+    <string name="stream_stop_toast">Play stream stop.</string>
+    <string name="song_info_title">Song Info</string>
+    <string name="info_title">Title</string>
+    <string name="info_artist">Artist</string>
+    <string name="info_album">Album</string>
+    <string name="info_years">Years</string>
+    <string name="info_circle">Circle</string>
+    <string name="info_unknown">Unknown</string>
+    <string name="settings_socket_client_id_title">WebSocket Client ID</string>
+    <string name="settings_server_using">Stream server</string>
+    <string name="settings_edit_server_title">Edit server</string>
+    <string name="settings_ui_visualizer_title">Visualizer</string>
+    <string name="settings_ui_visualizer_desc">Audio visualization requires the activation of recording permissions to enable internal audio recording functionality within the application.
+        Please be assured that this feature does not in any way compromise your privacy.</string>
+    <string name="perm_need_basic">Need basic permissions.</string>
+    <string name="perm_need_record">Need record permission.</string>
+    <string name="perm_denied_record">Record permission denied.</string>
+    <string name="menu_settings_title">Settings</string>
+    <string name="server_default">Default web server (128kbps)</string>
+    <string name="server_mobile">Mobile server (64kbps)</string>
+    <string name="server_enhanced">Enhanced server (256kbps)</string>
+    <string name="server_custom">Custom server</string>
+    <string name="settings_saved_toast">Settings will apply at next launch or next metadata update.</string>
+    <string name="status_idle">IDLE</string>
+    <string name="status_buffering">BUFFERING</string>
+    <string name="status_ready">READY</string>
+    <string name="song_history_title">Song History</string>
+    <string name="datetime_format">MM/dd/yyyy  HH:mm</string>
+    <string name="item_str_circle">Circle：<xliff:g id="circle">%s</xliff:g></string>
+    <string name="item_str_artists">Artists：<xliff:g id="artists">%s</xliff:g></string>
+    <string name="item_str_album">Album：<xliff:g id="album">%s</xliff:g></string>
+    <string name="clear_history_text">Clear history</string>
+    <string name="no_data_hint">No data</string>
+    <string name="clear_history_msg">Are you sure?</string>
+    <string name="history_cleared_toast">History has been cleared.</string>
+    <string name="socket_error_server_msg">ERROR: Got error message from server: \n</string>
+    <string name="socket_error_json_data">ERROR: Wrong JSON data!</string>
+    <string name="socket_error_reconnect">ERROR: Socket connect unexpected, retry count: </string>
+    <string name="default_footer_tips" translatable="false">Default footer tips</string>
+    <string name="song_item_info_footer_tips">You can copy the text by long-pressing on it.</string>
+    <string name="song_item_btn_search">Search on THBWiki…</string>
+    <string name="song_item_btn_copy">Copy text…</string>
+    <string name="song_item_btn_search_placeholder">Search <xliff:g id="text">%s</xliff:g></string>
+    <string name="song_item_btn_copy_placeholder">Copy <xliff:g id="text">%s</xliff:g></string>
+    <string name="network_lost">Lost network…</string>
+    <string name="network_restored">Network connected</string>
+    <string name="about_title">About App</string>
+    <string name="about_content_text">GitHub <a href="https://github.com/Yuyuko1024">Junko Yuko</a> <br/><p>This is a third-party Android client that allows you to listen to <a href="https://gensokyoradio.net/">Gensokyo Radio</a>, a 24/7 internet radio station from <b>LunarSpotlight Media</b>.</p></string>
+    <string name="about_content_copyright" translatable="false">
+        The album art, circle art, and related images used on this site are for illustrative purposes only and are copyright their respective owners. \n\n
+Touhou Project is © Team Shanghai Alice / ZUN \n\n
+Gensokyo Radio and the Musical Torii logo are trademarks of Gensokyo Radio / LunarSpotlight Media
+    </string>
+    <string name="login_title">Log in to Gensokyo Radio</string>
+    <string name="login_activity_title">Login</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="login_create_account">Create Account</string>
+    <string name="login_forgot_password">Forgot Password</string>
+    <string name="login_button">@string/login_activity_title</string>
+    <string name="login_error_empty">Empty string</string>
+    <string name="login_error_invalid">Login info invalid</string>
+    <string name="login_error_network">Network error</string>
+    <string name="login_error_server">Server response error</string>
+    <string name="user_sheet_username_text_title">Username</string>
+    <string name="user_sheet_userid_text_title">User ID</string>
+    <string name="user_sheet_logout">Logout</string>
+    <string name="user_sheet_logout_success">Logout success</string>
+    <string name="user_sheet_logout_err">Logout error</string>
+    <string name="song_history_online">Online History</string>
+    <string name="song_history_local">Local History</string>
+    <string name="online_history_time_less_min"><xliff:g id="text">%s</xliff:g> seconds ago</string>
+    <string name="online_history_time_one_min">1 minute ago</string>
+    <string name="online_history_time_mins">Played at <xliff:g id="text">%s</xliff:g> minutes ago</string>
+    <string name="settings_title_cover_quality">Cover image quality</string>
+    <string name="song_rate_dialog_title">Rate this song</string>
+    <string name="song_rate_success">Thanks for your rating!</string>
+    <string name="song_rate_error">Rate error</string>
+    <string name="network_connecting">Connecting...</string>
+</resources>

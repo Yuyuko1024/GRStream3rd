@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="cover_quality">
+        <item>Standard (500px)</item>
+        <item>Mobile (200px)</item>
+    </string-array>
+</resources>

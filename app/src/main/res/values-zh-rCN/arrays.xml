@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="cover_quality">
+        <item>标准 (500px)</item>
+        <item>移动网络 (200px)</item>
+    </string-array>
+</resources>
