@@ -3,18 +3,27 @@ package net.hearnsoft.gr3rd.compose.ui.view
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -51,21 +60,9 @@ fun MainView(
 ) {
     val navController = rememberNavController()
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
-
     // 收集对话框状态
     val showNowPlayingDialog = songViewModel.showSongInfoDialog.collectAsState()
     val currentSongInfo by songViewModel.currentSongInfo.collectAsState()
-
-    // 根据当前路由设置标题
-    val title = when (currentRoute) {
-        ScreenRoute.Home.route -> "首页"
-        ScreenRoute.Library.route -> "媒体库"
-        ScreenRoute.History.route -> "历史记录"
-        ScreenRoute.Account.route -> "个人"
-        else -> stringResource(R.string.app_name)
-    }
 
     if (showNowPlayingDialog.value && currentSongInfo != null) {
         val songData = currentSongInfo?.songInfo
@@ -95,23 +92,7 @@ fun MainView(
         modifier = modifier
             .fillMaxSize()
             .background(Theme.colors.background)
-            .let {
-                if (currentRoute != ScreenRoute.Radio.route) {
-                    it.safeMainPadding() // 如果是 Radio 页面，则不显示标题栏
-                } else {
-                    it
-                }
-            }
     ) {
-        if (currentRoute != ScreenRoute.Radio.route) {
-            // 如果不是 Radio 页面，则显示标题栏
-            TitleBar(
-                onBack = {
-                },
-                showBackBtn = false,
-                text = title
-            )
-        }
         MainNavHost(
             modifier = Modifier
                 .weight(1f)
@@ -222,19 +203,6 @@ fun MainBottomBar(
             painter = painterResource(id = R.drawable.ic_home_24px),
         )
         BottomBarItem(
-            text = "电台",
-            onClick = {
-                if (currentRoute != ScreenRoute.Radio.route) {
-                    navController.navigate(ScreenRoute.Radio.route) {
-                        popUpTo(navController.graph.startDestinationId)
-                        launchSingleTop = true
-                    }
-                }
-            },
-            state = currentRoute == ScreenRoute.Radio.route,
-            painter = painterResource(id = R.drawable.ic_podcasts_24px),
-        )
-        BottomBarItem(
             text = "媒体库",
             onClick = {
                 if (currentRoute != ScreenRoute.Library.route) {
@@ -246,6 +214,19 @@ fun MainBottomBar(
             },
             state = currentRoute == ScreenRoute.Library.route,
             painter = painterResource(id = R.drawable.ic_art_track_24px),
+        )
+        BottomBarItem(
+            text = "电台",
+            onClick = {
+                if (currentRoute != ScreenRoute.Radio.route) {
+                    navController.navigate(ScreenRoute.Radio.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.Radio.route,
+            painter = painterResource(id = R.drawable.ic_podcasts_24px),
         )
         BottomBarItem(
             text = "记录",
