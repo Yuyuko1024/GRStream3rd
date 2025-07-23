@@ -253,7 +253,6 @@ class WebSocketService : Service() {
     // 重新连接 WebSocket
     private suspend fun reconnectWebSocket() {
         recheck++
-        postSocketErrorToast(recheck)
 
         val delayMillis = calculateReconnectDelay(recheck)
         Logger.info(TAG, "Will reconnect in ${delayMillis}ms...")
@@ -297,16 +296,6 @@ class WebSocketService : Service() {
         } catch (e: Exception) {
             Logger.err(TAG, "Error creating SSLContext", e)
             SSLContext.getDefault().socketFactory
-        }
-    }
-
-    private suspend fun postSocketErrorToast(recheckCount: Int) {
-        withContext(Dispatchers.Main) {
-            Toast.makeText(
-                applicationContext,
-                getString(R.string.socket_error_reconnect) + recheckCount,
-                Toast.LENGTH_SHORT
-            ).show()
         }
     }
 
