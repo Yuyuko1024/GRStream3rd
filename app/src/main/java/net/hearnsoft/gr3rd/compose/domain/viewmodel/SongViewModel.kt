@@ -145,9 +145,13 @@ class SongViewModel : ViewModel() {
         _webSocketConnected.value = isConnected
     }
 
-    fun showSongInfo(nowPlaying: NowPlayingData) {
-        _currentSongInfo.value = nowPlaying
+    // 在 SongViewModel 中添加这些方法
+    fun showSongInfoDialog() {
         _showSongInfoDialog.value = true
+    }
+
+    fun updateSongInfo(nowPlaying: NowPlayingData) {
+        _currentSongInfo.value = nowPlaying
     }
 
     fun hideSongInfo() {

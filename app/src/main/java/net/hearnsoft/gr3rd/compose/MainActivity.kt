@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
@@ -20,6 +21,7 @@ import com.hjq.permissions.permission.base.IPermission
 import com.moriafly.salt.ui.UnstableSaltUiApi
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
+import net.hearnsoft.gr3rd.compose.MainActivity
 import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
 import net.hearnsoft.gr3rd.compose.infrastructure.repository.GRStationNowPlayingRepository
 import net.hearnsoft.gr3rd.compose.service.GRStreamPlaybackService
@@ -52,10 +54,10 @@ class MainActivity : ComponentActivity() {
         setContent {
             GRStream3rdComposeTheme {
                 MainView(
+                    context = this@MainActivity,
                     songViewModel = songViewModel,
                     onPlayPauseClick = { handlePlayPause() },
-                    onRateClick = { showRateDialog() },
-                    onMoreInfoClick = { showSongInfoDialog() }
+                    onRateClick = { showRateDialog() }
                 )
             }
         }
@@ -132,27 +134,6 @@ class MainActivity : ComponentActivity() {
         Logger.info(TAG, "Show rate dialog requested")
     }
 
-    private fun showSongInfoDialog() {
-        Logger.info(TAG, "Show song info dialog requested")
-        lifecycleScope.launch {
-            try {
-                val result = nowPlayingRepository.fetchNowPlaying()
-
-                result.fold(
-                    onSuccess = {nowPlaying ->
-                        // 调用ViewModel方法显示当前正在播放的歌曲信息
-                        songViewModel.showSongInfo(nowPlaying)
-                    },
-                    onFailure = { error ->
-                        Logger.err(TAG, "Failed to fetch now playing data", error)
-                    }
-                )
-            } catch (e: Exception) {
-                Logger.err(TAG, "Error fetching now playing data", e)
-            }
-        }
-    }
-
     private fun showNoticeDialogIfNeeded() {
         if (!SPStaticUtils.getBoolean(Constants.PREF_SHOWED_NOTICE_DIALOG, false)) {
             // TODO: 实现首次启动通知对话框
@@ -174,10 +155,10 @@ fun MainPreview() {
     GRStream3rdComposeTheme {
         // 创建一个模拟的 ViewModel 用于预览
         MainView(
+            context = LocalContext.current,
             songViewModel = SongViewModel.getInstance(),
             onPlayPauseClick = {},
-            onRateClick = {},
-            onMoreInfoClick = {}
+            onRateClick = {}
         )
     }
 }
