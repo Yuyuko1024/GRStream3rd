@@ -21,7 +21,6 @@ import com.hjq.permissions.permission.base.IPermission
 import com.moriafly.salt.ui.UnstableSaltUiApi
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
-import net.hearnsoft.gr3rd.compose.MainActivity
 import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
 import net.hearnsoft.gr3rd.compose.infrastructure.repository.GRStationNowPlayingRepository
 import net.hearnsoft.gr3rd.compose.service.GRStreamPlaybackService
@@ -35,14 +34,11 @@ import net.hearnsoft.gr3rd.compose.utils.Logger
 class MainActivity : ComponentActivity() {
     companion object {
         const val TAG = "MainActivity"
-        const val RC_PERM_DEFAULT = 1
     }
 
     // 使用共享的 ViewModel 实例
     private val songViewModel by lazy { SongViewModel.getInstance() }
     private var mediaController: MediaController? = null
-
-    private val nowPlayingRepository = GRStationNowPlayingRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
