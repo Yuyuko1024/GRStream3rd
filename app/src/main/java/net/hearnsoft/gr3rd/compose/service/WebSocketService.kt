@@ -148,16 +148,12 @@ class WebSocketService : Service() {
             },
             onClose = { code, reason, remote ->
                 Logger.info(TAG, "WebSocket connection closed: code=${code}, reason=${reason}, remote=${remote}")
+                // 更新 ViewModel 中的 WebSocket 状态
                 songViewModel.updateWebSocketStatus(false)
-                // 如果是正常关闭（code 1000），则不需要重连
-                if (code != 1000 || !remote) {
-                    // 处理非正常关闭
-                    Logger.warn(TAG, "WebSocket closed unexpectedly: code=$code, reason=$reason")
-                    Logger.info(TAG, "Attempting to reconnect WebSocket...")
-                    // 重新连接 WebSocket
-                    serviceScope.launch {
-                        reconnectWebSocket()
-                    }
+                Logger.info(TAG, "Attempting to reconnect WebSocket...")
+                // 重新连接 WebSocket
+                serviceScope.launch {
+                    reconnectWebSocket()
                 }
             },
             onError = {
