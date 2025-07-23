@@ -83,5 +83,5 @@ Gensokyo Radio and the Musical Torii logo are trademarks of Gensokyo Radio / Lun
     <string name="song_rate_dialog_title">Rate this song</string>
     <string name="song_rate_success">Thanks for your rating!</string>
     <string name="song_rate_error">Rate error</string>
-    <string name="network_connecting">Connecting...</string>
+    <string name="network_connecting">Connecting…</string>
 </resources>

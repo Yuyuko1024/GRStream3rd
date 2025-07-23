@@ -76,5 +76,5 @@
     <string name="song_rate_dialog_title">评分这首歌</string>
     <string name="song_rate_success">感谢您的评分！</string>
     <string name="song_rate_error">评分失败</string>
-    <string name="network_connecting">网络正在连接...</string>
+    <string name="network_connecting">正在连接服务器…</string>
 </resources>
