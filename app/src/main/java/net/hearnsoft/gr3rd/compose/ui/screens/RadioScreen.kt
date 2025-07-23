@@ -216,7 +216,6 @@ fun RadioScreen(
                 // 评分按钮
                 IconButton(
                     onClick = onRateClick,
-                    enabled = playButtonEnabled,
                     modifier = Modifier.padding(end = 6.dp)
                 ) {
                     Icon(
@@ -229,7 +228,6 @@ fun RadioScreen(
                 // 更多信息按钮
                 IconButton(
                     onClick = onMoreInfoClick,
-                    enabled = playButtonEnabled,
                     modifier = Modifier.padding(start = 16.dp, end = 4.dp)
                 ) {
                     Icon(
