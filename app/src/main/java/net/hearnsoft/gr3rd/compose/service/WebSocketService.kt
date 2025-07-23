@@ -211,8 +211,8 @@ class WebSocketService : Service() {
         when {
             data.contains("welcome") -> {
                 val clientData = gson.fromJson(data, RadioClientData::class.java)
-                clientId = clientData.clientId
-                Logger.info(TAG, "WebSocket connected with client ID: ${clientData.clientId}")
+                clientId = clientData.id
+                Logger.info(TAG, "WebSocket connected with client ID: ${clientData.id}")
                 SPStaticUtils.put(Constants.PREF_CLIENT_ID, clientId)
             }
             data == Constants.WS_PING_MSG.toString() -> {
