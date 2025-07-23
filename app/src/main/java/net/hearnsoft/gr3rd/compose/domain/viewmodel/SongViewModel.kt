@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import net.hearnsoft.gr3rd.compose.domain.beans.NowPlayingData
 import net.hearnsoft.gr3rd.compose.domain.beans.SocketData
 import net.hearnsoft.gr3rd.compose.utils.GlobalTimer
 
@@ -52,20 +53,11 @@ class SongViewModel : ViewModel() {
     val visualizerUsable: StateFlow<Boolean> = _visualizerUsable.asStateFlow()
 
     // 当前播放详细信息
-    private val _nowPlayingTitle = MutableStateFlow("")
-    val nowPlayingTitle: StateFlow<String> = _nowPlayingTitle.asStateFlow()
+    private val _showSongInfoDialog = MutableStateFlow(false)
+    val showSongInfoDialog: StateFlow<Boolean> = _showSongInfoDialog.asStateFlow()
 
-    private val _nowPlayingArtist = MutableStateFlow("")
-    val nowPlayingArtist: StateFlow<String> = _nowPlayingArtist.asStateFlow()
-
-    private val _nowPlayingAlbum = MutableStateFlow("")
-    val nowPlayingAlbum: StateFlow<String> = _nowPlayingAlbum.asStateFlow()
-
-    private val _nowPlayingYears = MutableStateFlow("")
-    val nowPlayingYears: StateFlow<String> = _nowPlayingYears.asStateFlow()
-
-    private val _nowPlayingCircle = MutableStateFlow("")
-    val nowPlayingCircle: StateFlow<String> = _nowPlayingCircle.asStateFlow()
+    private val _currentSongInfo = MutableStateFlow<NowPlayingData?>(null)
+    val currentSongInfo: StateFlow<NowPlayingData?> = _currentSongInfo.asStateFlow()
 
     // 更新标志
     private val _isUpdatedInfo = MutableStateFlow(false)
@@ -102,13 +94,6 @@ class SongViewModel : ViewModel() {
         _artist.value = socketData.artist ?: "Unknown Artist"
         _album.value = socketData.album ?: "Unknown Album"
         _coverUrl.value = socketData.albumart
-
-        // 更新详细信息
-        _nowPlayingTitle.value = socketData.title ?: ""
-        _nowPlayingArtist.value = socketData.artist ?: ""
-        _nowPlayingAlbum.value = socketData.album ?: ""
-        _nowPlayingYears.value = socketData.year ?: ""
-        _nowPlayingCircle.value = socketData.circle ?: ""
 
         // 标记为已更新
         _isUpdatedInfo.value = true
@@ -158,6 +143,16 @@ class SongViewModel : ViewModel() {
     // WebSocket 连接状态
     fun updateWebSocketStatus(isConnected: Boolean) {
         _webSocketConnected.value = isConnected
+    }
+
+    fun showSongInfo(nowPlaying: NowPlayingData) {
+        _currentSongInfo.value = nowPlaying
+        _showSongInfoDialog.value = true
+    }
+
+    fun hideSongInfo() {
+        _showSongInfoDialog.value = false
+        _currentSongInfo.value = null
     }
 
     // 可视化器状态

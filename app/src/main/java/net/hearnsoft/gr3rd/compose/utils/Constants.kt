@@ -14,8 +14,14 @@ object Constants {
         addProperty("message", "ping")
     }
 
-    const val NOW_PLAYING_JSON: String = "https://gensokyoradio.net/api/station/playing/"
-    const val SONG_HISTORY_JSON: String = "https://gensokyoradio.net/api/station/history/"
+    const val GR_STATION_API_BASE = "https://gensokyoradio.net/api/station/"
+    const val GR_API_BASE = "https://gensokyoradio.net/api/"
+
+    const val STATION_NOW_PLAYING_API: String = "playing"
+    const val STATION_SONG_HISTORY_API: String = "history"
+    const val STATION_SONG_RATING_API: String = "rating"
+
+    const val GR_LOGIN_API: String = "login"
 
     const val COVER_URL: String = "https://gensokyoradio.net/images/albums/"
     const val DEFAULT_COVER_URL: String = "https://gensokyoradio.net/images/assets/no-albumart.png"
@@ -24,10 +30,8 @@ object Constants {
     const val GR_STREAM_URL_MOBILE: String = "https://stream.gensokyoradio.net/2"
     const val GR_STREAM_URL_ENHANCED: String = "https://stream.gensokyoradio.net/3"
 
-    const val GR_LOGIN_API_URL: String = "https://gensokyoradio.net/api/login/"
     const val GR_REGISTER_URL: String = "https://gensokyoradio.net/register"
     const val GR_FORGOT_PASSWORD_URL: String = "https://gensokyoradio.net/account/recover"
-    const val GR_SONG_RATE_URL: String = "https://gensokyoradio.net/api/station/rating/"
 
     val GR_PWA_APP_URL: Uri = "https://app.gensokyoradio.net/".toUri()
 

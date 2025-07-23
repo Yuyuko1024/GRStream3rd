@@ -8,17 +8,21 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.moriafly.salt.ui.RoundedColumn
 import com.moriafly.salt.ui.TitleBar
 import com.moriafly.salt.ui.UnstableSaltUiApi
+import com.moriafly.salt.ui.dialog.YesDialog
 import com.moriafly.salt.ui.ext.safeMainPadding
 import net.hearnsoft.gr3rd.compose.MainBottomBar
 import net.hearnsoft.gr3rd.compose.R
@@ -46,6 +50,10 @@ fun MainView(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    // 收集对话框状态
+    val showNowPlayingDialog = songViewModel.showSongInfoDialog.collectAsState()
+    val currentSongInfo by songViewModel.currentSongInfo.collectAsState()
+
     // 根据当前路由设置标题
     val title = when (currentRoute) {
         ScreenRoute.Home.route -> "首页"
@@ -53,6 +61,30 @@ fun MainView(
         ScreenRoute.History.route -> "历史记录"
         ScreenRoute.Account.route -> "个人"
         else -> stringResource(R.string.app_name)
+    }
+
+    if (showNowPlayingDialog.value && currentSongInfo != null) {
+        val songData = currentSongInfo?.songInfo
+
+        // 构建对话框内容
+        val content = songData?.let {
+            "标题：${it.title}\n艺术家：${it.artist}\n专辑：${it.album}\n" +
+                    "发行年份：${it.year}\n社团：${it.circle}\n"
+        } ?: "未知歌曲信息"
+
+
+        RoundedColumn {
+            YesDialog(
+                onDismissRequest = { songViewModel.hideSongInfo() },
+                properties = DialogProperties(
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true
+                ),
+                title = songData?.title ?: "未知歌曲",
+                content = content,
+                confirmText = "确定"
+            )
+        }
     }
 
     Column(

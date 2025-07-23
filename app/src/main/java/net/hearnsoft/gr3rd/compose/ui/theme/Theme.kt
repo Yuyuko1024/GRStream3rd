@@ -24,7 +24,7 @@ private val DarkColorScheme = darkSaltColors(
     subBackground = DarkSurface, // 暗色主题的次要背景色
     popup = DarkSurfaceVariant, // 暗色主题的弹窗背景色
     stroke = DarkOutline, // 暗色主题的描边颜色
-    onHighlight = DarkPrimary // 暗色主题的高亮色变体
+    onHighlight = DarkTextPrimary // 暗色主题的高亮色变体
 )
 
 private val LightColorScheme = lightSaltColors(
@@ -35,7 +35,7 @@ private val LightColorScheme = lightSaltColors(
     subBackground = Surface, // 次要背景色
     popup = White, // 弹窗背景色
     stroke = Outline, // 描边颜色
-    onHighlight = Primary // 高亮色上的文字颜色
+    onHighlight = TextOnPrimary // 高亮色上的文字颜色
 )
 
 @Composable

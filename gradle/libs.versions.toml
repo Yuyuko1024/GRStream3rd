@@ -1,6 +1,7 @@
 [versions]
 agp = "8.10.1"
 coilCompose = "3.2.0"
+converterGson = "2.11.0"
 gson = "2.11.0"
 javaWebsocket = "1.5.3"
 kotlin = "2.0.21"
@@ -8,12 +9,13 @@ coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+kotlinxCoroutinesAndroid = "1.10.2"
 kotlinxCoroutinesGuava = "1.10.2"
 lifecycleRuntimeKtx = "2.9.2"
 activityCompose = "1.10.1"
 composeBom = "2024.09.00"
 retrofit = "2.11.0"
-saltUi = "2.5.0"
+saltUi = "2.5.2"
 media3 = "1.7.1"
 animationGraphics = "1.8.2"
 utilcodex = "1.31.1"
@@ -24,6 +26,8 @@ navigationCompose = "2.9.0"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
+retrofit-converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 java-websocket = { module = "org.java-websocket:Java-WebSocket", version.ref = "javaWebsocket" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

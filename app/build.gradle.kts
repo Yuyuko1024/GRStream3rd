@@ -63,6 +63,7 @@ dependencies {
 
     // Retrofit
     implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
 
     // AndroidX Media 3
     implementation(libs.androidx.media3.common.ktx)
@@ -89,6 +90,7 @@ dependencies {
 
     // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.guava)
+    implementation(libs.kotlinx.coroutines.android)
 
     // Navigation
     implementation(libs.androidx.navigation.compose)

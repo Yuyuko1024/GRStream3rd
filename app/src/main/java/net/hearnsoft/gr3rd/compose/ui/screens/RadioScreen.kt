@@ -163,7 +163,7 @@ fun RadioScreen(
 
                 // 评分按钮
                 IconButton(
-                    onClick = { onRateClick },
+                    onClick = onRateClick,
                     enabled = playButtonEnabled,
                     modifier = Modifier.padding(end = 6.dp)
                 ) {
@@ -176,7 +176,7 @@ fun RadioScreen(
 
                 // 更多信息按钮
                 IconButton(
-                    onClick = { onMoreInfoClick },
+                    onClick = onMoreInfoClick,
                     enabled = playButtonEnabled,
                     modifier = Modifier.padding(start = 16.dp, end = 4.dp)
                 ) {
@@ -241,7 +241,7 @@ fun RadioScreen(
                 modifier = Modifier
                     .padding(16.dp)
                     .align(Alignment.CenterHorizontally),
-                containerColor = SaltTheme.colors.onHighlight,
+                containerColor = SaltTheme.colors.highlight,
                 contentColor = Color.White
             ) {
                 when {

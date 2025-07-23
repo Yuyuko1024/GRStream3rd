@@ -10,6 +10,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,7 +35,9 @@ import com.moriafly.salt.ui.UnstableSaltUiApi
 import com.moriafly.salt.ui.ext.safeMainPadding
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
+import net.hearnsoft.gr3rd.compose.domain.beans.NowPlayingData
 import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
+import net.hearnsoft.gr3rd.compose.infrastructure.repository.GRStationNowPlayingRepository
 import net.hearnsoft.gr3rd.compose.service.GRStreamPlaybackService
 import net.hearnsoft.gr3rd.compose.ui.screens.ScreenRoute
 import net.hearnsoft.gr3rd.compose.ui.theme.GRStream3rdComposeTheme
@@ -51,6 +56,8 @@ class MainActivity : ComponentActivity() {
     // 使用共享的 ViewModel 实例
     private val songViewModel by lazy { SongViewModel.getInstance() }
     private var mediaController: MediaController? = null
+
+    private val nowPlayingRepository = GRStationNowPlayingRepository()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -143,8 +150,24 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showSongInfoDialog() {
-        // TODO: 实现歌曲信息对话框
         Logger.info(TAG, "Show song info dialog requested")
+        lifecycleScope.launch {
+            try {
+                val result = nowPlayingRepository.fetchNowPlaying()
+
+                result.fold(
+                    onSuccess = {nowPlaying ->
+                        // 调用ViewModel方法显示当前正在播放的歌曲信息
+                        songViewModel.showSongInfo(nowPlaying)
+                    },
+                    onFailure = { error ->
+                        Logger.err(TAG, "Failed to fetch now playing data", error)
+                    }
+                )
+            } catch (e: Exception) {
+                Logger.err(TAG, "Error fetching now playing data", e)
+            }
+        }
     }
 
     private fun showNoticeDialogIfNeeded() {
