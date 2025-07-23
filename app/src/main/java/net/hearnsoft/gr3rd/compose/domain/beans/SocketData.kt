@@ -3,7 +3,7 @@ package net.hearnsoft.gr3rd.compose.domain.beans
 import com.google.gson.annotations.SerializedName
 import net.hearnsoft.gr3rd.compose.utils.Constants
 
-data class NowPlayingData(
+data class SocketData(
     val songid: Int,
     val title: String?,
     val artist: String?,

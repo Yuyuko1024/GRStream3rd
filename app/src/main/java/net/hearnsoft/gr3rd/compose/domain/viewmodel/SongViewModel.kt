@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import net.hearnsoft.gr3rd.compose.domain.beans.NowPlayingData
-import net.hearnsoft.gr3rd.compose.utils.Constants
+import net.hearnsoft.gr3rd.compose.domain.beans.SocketData
 import net.hearnsoft.gr3rd.compose.utils.GlobalTimer
 
 class SongViewModel : ViewModel() {
@@ -97,29 +96,29 @@ class SongViewModel : ViewModel() {
     // === 数据更新方法 ===
 
     // 从 WebSocket 更新完整歌曲信息
-    fun updateFromWebSocket(nowPlayingData: NowPlayingData) {
+    fun updateFromWebSocket(socketData: SocketData) {
         // 更新基本信息（用于UI显示）
-        _title.value = nowPlayingData.title ?: "Unknown Title"
-        _artist.value = nowPlayingData.artist ?: "Unknown Artist"
-        _album.value = nowPlayingData.album ?: "Unknown Album"
-        _coverUrl.value = nowPlayingData.albumart
+        _title.value = socketData.title ?: "Unknown Title"
+        _artist.value = socketData.artist ?: "Unknown Artist"
+        _album.value = socketData.album ?: "Unknown Album"
+        _coverUrl.value = socketData.albumart
 
         // 更新详细信息
-        _nowPlayingTitle.value = nowPlayingData.title ?: ""
-        _nowPlayingArtist.value = nowPlayingData.artist ?: ""
-        _nowPlayingAlbum.value = nowPlayingData.album ?: ""
-        _nowPlayingYears.value = nowPlayingData.year ?: ""
-        _nowPlayingCircle.value = nowPlayingData.circle ?: ""
+        _nowPlayingTitle.value = socketData.title ?: ""
+        _nowPlayingArtist.value = socketData.artist ?: ""
+        _nowPlayingAlbum.value = socketData.album ?: ""
+        _nowPlayingYears.value = socketData.year ?: ""
+        _nowPlayingCircle.value = socketData.circle ?: ""
 
         // 标记为已更新
         _isUpdatedInfo.value = true
 
         // 启动计时器
-        if (nowPlayingData.duration >= 0) {
+        if (socketData.duration >= 0) {
             globalTimer.startTimer(
-                duration = nowPlayingData.duration,
-                played = nowPlayingData.played,
-                remaining = nowPlayingData.remaining
+                duration = socketData.duration,
+                played = socketData.played,
+                remaining = socketData.remaining
             )
         }
 
@@ -127,12 +126,12 @@ class SongViewModel : ViewModel() {
         viewModelScope.launch {
             _mediaUpdateEvent.emit(
                 MediaUpdateData(
-                    title = nowPlayingData.title ?: "Unknown Title",
-                    artist = nowPlayingData.artist ?: "Unknown Artist",
-                    album = nowPlayingData.album ?: "Unknown Album",
-                    coverUrl = nowPlayingData.albumart,
-                    years = nowPlayingData.year ?: "",
-                    circle = nowPlayingData.circle ?: ""
+                    title = socketData.title ?: "Unknown Title",
+                    artist = socketData.artist ?: "Unknown Artist",
+                    album = socketData.album ?: "Unknown Album",
+                    coverUrl = socketData.albumart,
+                    years = socketData.year ?: "",
+                    circle = socketData.circle ?: ""
                 )
             )
         }

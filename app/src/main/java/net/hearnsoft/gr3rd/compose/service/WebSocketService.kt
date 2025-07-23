@@ -18,7 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.hearnsoft.gr3rd.compose.R
-import net.hearnsoft.gr3rd.compose.domain.beans.NowPlayingData
+import net.hearnsoft.gr3rd.compose.domain.beans.SocketData
 import net.hearnsoft.gr3rd.compose.domain.beans.RadioClientData
 import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
 import net.hearnsoft.gr3rd.compose.socket.GRWebSocketClient
@@ -226,10 +226,10 @@ class WebSocketService : Service() {
     // 处理服务器发来的专辑信息
     private fun genBeanData(string: String) {
         try {
-            val nowPlayingData = gson.fromJson(string, NowPlayingData::class.java)
+            val socketData = gson.fromJson(string, SocketData::class.java)
             // 更新 ViewModel 中的当前播放数据
-            songViewModel.updateFromWebSocket(nowPlayingData)
-            Logger.info(TAG, "Updated now playing data: ${nowPlayingData.title}")
+            songViewModel.updateFromWebSocket(socketData)
+            Logger.info(TAG, "Updated now playing data: ${socketData.title}")
         } catch (e: Exception) {
             Logger.err(TAG, "Error parsing now playing data", e)
         }
