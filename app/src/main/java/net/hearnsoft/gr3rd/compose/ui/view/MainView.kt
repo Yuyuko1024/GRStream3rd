@@ -36,6 +36,7 @@ import net.hearnsoft.gr3rd.compose.ui.screens.RadioScreen
 import net.hearnsoft.gr3rd.compose.ui.screens.ScreenRoute
 import net.hearnsoft.gr3rd.compose.ui.theme.GRStream3rdComposeTheme
 import net.hearnsoft.gr3rd.compose.ui.theme.Theme
+import net.hearnsoft.gr3rd.compose.ui.widgets.NowPlayingDialog
 
 @UnstableSaltUiApi
 @Composable
@@ -53,27 +54,13 @@ fun MainView(
     val currentSongInfo by songViewModel.currentSongInfo.collectAsState()
 
     if (showNowPlayingDialog.value && currentSongInfo != null) {
-        val songData = currentSongInfo?.songInfo
-
-        // 构建对话框内容
-        val content = songData?.let {
-            "标题：${it.title}\n艺术家：${it.artist}\n专辑：${it.album}\n" +
-                    "发行年份：${it.year}\n社团：${it.circle}\n"
-        } ?: "未知歌曲信息"
-
-
-        RoundedColumn {
-            YesDialog(
-                onDismissRequest = { songViewModel.hideSongInfo() },
-                properties = DialogProperties(
-                    dismissOnBackPress = true,
-                    dismissOnClickOutside = true
-                ),
-                title = songData?.title ?: "未知歌曲",
-                content = content,
-                confirmText = "确定"
-            )
-        }
+        val songData = currentSongInfo!!.songInfo
+        // 显示当前播放歌曲信息对话框
+        NowPlayingDialog(
+            onDismiss = { songViewModel.hideSongInfo() },
+            properties = DialogProperties(),
+            nowPlayingSongInfo = songData,
+        )
     }
 
     Column(
