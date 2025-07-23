@@ -16,6 +16,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // 限制 arm64-v8a 架构
+        ndk {
+            abiFilters += setOf("arm64-v8a")
+        }
     }
 
     buildTypes {
