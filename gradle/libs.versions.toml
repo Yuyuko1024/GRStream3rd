@@ -18,6 +18,7 @@ media3 = "1.7.1"
 animationGraphics = "1.8.2"
 utilcodex = "1.31.1"
 xxpermissions = "25.0"
+navigationCompose = "2.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +54,8 @@ androidx-animation-graphics = { module = "androidx.compose.animation:animation-g
 androidx-animation-graphics-android = { module = "androidx.compose.animation:animation-graphics-android", version.ref = "animationGraphics" }
 utilcodex = { module = "com.blankj:utilcodex", version.ref = "utilcodex" }
 xxpermissions = { module = "com.github.getActivity:XXPermissions", version.ref = "xxpermissions" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-navigation-compose-android = { module = "androidx.navigation:navigation-compose-android", version.ref = "navigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

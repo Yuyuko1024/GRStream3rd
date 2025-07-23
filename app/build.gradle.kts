@@ -90,6 +90,10 @@ dependencies {
     // Kotlin Coroutines
     implementation(libs.kotlinx.coroutines.guava)
 
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.navigation.compose.android)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

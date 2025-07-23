@@ -7,22 +7,34 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.blankj.utilcode.util.SPStaticUtils
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
 import com.hjq.permissions.permission.PermissionLists
 import com.hjq.permissions.permission.base.IPermission
+import com.moriafly.salt.ui.BottomBar
+import com.moriafly.salt.ui.BottomBarItem
+import com.moriafly.salt.ui.SaltTheme
 import com.moriafly.salt.ui.UnstableSaltUiApi
+import com.moriafly.salt.ui.ext.safeMainPadding
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
 import net.hearnsoft.gr3rd.compose.service.GRStreamPlaybackService
+import net.hearnsoft.gr3rd.compose.ui.screens.ScreenRoute
 import net.hearnsoft.gr3rd.compose.ui.theme.GRStream3rdComposeTheme
 import net.hearnsoft.gr3rd.compose.ui.view.MainView
 import net.hearnsoft.gr3rd.compose.utils.Constants
@@ -60,10 +72,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun startPlaybackService() {
-        // 启动媒体播放服务
-        val playerIntent = Intent(this, GRStreamPlaybackService::class.java)
-        startForegroundService(playerIntent)
-
         lifecycleScope.launch {
             try {
                 val sessionToken = SessionToken(
@@ -150,6 +158,87 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         mediaController?.release()
         Logger.info(TAG, "MainActivity destroyed")
+    }
+}
+
+@Composable
+@UnstableSaltUiApi
+fun MainBottomBar(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    BottomBar(
+        backgroundColor = SaltTheme.colors.background,
+        modifier = modifier
+    ) {
+        BottomBarItem(
+            text = "首页",
+            onClick = {
+                if (currentRoute != ScreenRoute.Home.route) {
+                    navController.navigate(ScreenRoute.Home.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.Home.route,
+            painter = painterResource(id = R.drawable.ic_home_24px),
+        )
+        BottomBarItem(
+            text = "电台",
+            onClick = {
+                if (currentRoute != ScreenRoute.Radio.route) {
+                    navController.navigate(ScreenRoute.Radio.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.Radio.route,
+            painter = painterResource(id = R.drawable.ic_podcasts_24px),
+        )
+        BottomBarItem(
+            text = "媒体库",
+            onClick = {
+                if (currentRoute != ScreenRoute.Library.route) {
+                    navController.navigate(ScreenRoute.Library.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.Library.route,
+            painter = painterResource(id = R.drawable.ic_art_track_24px),
+        )
+        BottomBarItem(
+            text = "记录",
+            onClick = {
+                if (currentRoute != ScreenRoute.History.route) {
+                    navController.navigate(ScreenRoute.History.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.History.route,
+            painter = painterResource(id = R.drawable.ic_music_history_24px),
+        )
+        BottomBarItem(
+            text = "账户",
+            onClick = {
+                if (currentRoute != ScreenRoute.Account.route) {
+                    navController.navigate(ScreenRoute.Account.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.Account.route,
+            painter = painterResource(id = R.drawable.ic_account_circle_24px),
+        )
     }
 }
 
