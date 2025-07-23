@@ -1,6 +1,7 @@
 package net.hearnsoft.gr3rd.compose.ui.view
 
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.window.DialogProperties
@@ -19,12 +21,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.moriafly.salt.ui.BottomBar
+import com.moriafly.salt.ui.BottomBarItem
 import com.moriafly.salt.ui.RoundedColumn
+import com.moriafly.salt.ui.SaltTheme
 import com.moriafly.salt.ui.TitleBar
 import com.moriafly.salt.ui.UnstableSaltUiApi
 import com.moriafly.salt.ui.dialog.YesDialog
 import com.moriafly.salt.ui.ext.safeMainPadding
-import net.hearnsoft.gr3rd.compose.MainBottomBar
 import net.hearnsoft.gr3rd.compose.R
 import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
 import net.hearnsoft.gr3rd.compose.ui.screens.AccountScreen
@@ -188,6 +192,87 @@ fun MainNavHost(
         composable(ScreenRoute.Account.route) {
             AccountScreen(modifier)
         }
+    }
+}
+
+@Composable
+@UnstableSaltUiApi
+fun MainBottomBar(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    BottomBar(
+        backgroundColor = SaltTheme.colors.background,
+        modifier = modifier
+    ) {
+        BottomBarItem(
+            text = "首页",
+            onClick = {
+                if (currentRoute != ScreenRoute.Home.route) {
+                    navController.navigate(ScreenRoute.Home.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.Home.route,
+            painter = painterResource(id = R.drawable.ic_home_24px),
+        )
+        BottomBarItem(
+            text = "电台",
+            onClick = {
+                if (currentRoute != ScreenRoute.Radio.route) {
+                    navController.navigate(ScreenRoute.Radio.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.Radio.route,
+            painter = painterResource(id = R.drawable.ic_podcasts_24px),
+        )
+        BottomBarItem(
+            text = "媒体库",
+            onClick = {
+                if (currentRoute != ScreenRoute.Library.route) {
+                    navController.navigate(ScreenRoute.Library.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.Library.route,
+            painter = painterResource(id = R.drawable.ic_art_track_24px),
+        )
+        BottomBarItem(
+            text = "记录",
+            onClick = {
+                if (currentRoute != ScreenRoute.History.route) {
+                    navController.navigate(ScreenRoute.History.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.History.route,
+            painter = painterResource(id = R.drawable.ic_music_history_24px),
+        )
+        BottomBarItem(
+            text = "账户",
+            onClick = {
+                if (currentRoute != ScreenRoute.Account.route) {
+                    navController.navigate(ScreenRoute.Account.route) {
+                        popUpTo(navController.graph.startDestinationId)
+                        launchSingleTop = true
+                    }
+                }
+            },
+            state = currentRoute == ScreenRoute.Account.route,
+            painter = painterResource(id = R.drawable.ic_account_circle_24px),
+        )
     }
 }
 
