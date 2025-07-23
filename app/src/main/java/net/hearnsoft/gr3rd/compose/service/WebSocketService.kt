@@ -291,13 +291,14 @@ class WebSocketService : Service() {
     }
 
     private fun getDefaultSSLSocketFactory() : SSLSocketFactory {
-        var sslContext: SSLContext = SSLContext.getInstance("Default")
-        try {
-            sslContext = SSLContext.getDefault()
+        return try {
+            val sslContext = SSLContext.getDefault()
+            sslContext.init(null, null, null)
+            sslContext.socketFactory
         } catch (e: Exception) {
             Logger.err(TAG, "Error creating SSLContext", e)
+            SSLContext.getDefault().socketFactory
         }
-        return sslContext.socketFactory
     }
 
     private suspend fun postSocketErrorToast(recheckCount: Int) {
