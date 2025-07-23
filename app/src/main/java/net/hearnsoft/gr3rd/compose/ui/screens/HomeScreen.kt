@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.moriafly.salt.ui.TitleBar
 import com.moriafly.salt.ui.UnstableSaltUiApi
+import com.moriafly.salt.ui.ext.safeMainPadding
 import net.hearnsoft.gr3rd.compose.ui.theme.GRStream3rdComposeTheme
 
 @Composable
@@ -13,16 +14,21 @@ import net.hearnsoft.gr3rd.compose.ui.theme.GRStream3rdComposeTheme
 fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
-    TitleBar(
-        onBack = {
-        },
-        showBackBtn = false,
-        text = "首页"
-    )
     Column(
         modifier = modifier
+            .safeMainPadding()
     ) {
+        TitleBar(
+            onBack = {
+            },
+            showBackBtn = false,
+            text = "首页"
+        )
+        Column(
+            modifier = modifier
+        ) {
 
+        }
     }
 }
 
