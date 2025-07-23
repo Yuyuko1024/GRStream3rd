@@ -1,5 +1,12 @@
 package net.hearnsoft.gr3rd.compose.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.EaseInOut
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,9 +25,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +53,9 @@ import com.moriafly.salt.ui.SaltTheme
 import com.moriafly.salt.ui.Text
 import com.moriafly.salt.ui.UnstableSaltUiApi
 import com.moriafly.salt.ui.ext.safeMainPadding
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.hearnsoft.gr3rd.compose.R
 import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
 import net.hearnsoft.gr3rd.compose.ui.theme.GRStream3rdComposeTheme
@@ -69,9 +85,45 @@ fun RadioScreen(
     val durationTime by songViewModel.durationTime.collectAsState()
     val progress by songViewModel.playProgress.collectAsState()
 
-    // 添加调试日志
-    LaunchedEffect(coverUrl) {
-        println("DEBUG: coverUrl = $coverUrl")
+    // 缓冲动画状态
+    var showBufferingAnimation by remember { mutableStateOf(false) }
+    var lastBufferingState by remember { mutableIntStateOf(bufferingState) }
+    var animationJob by remember { mutableStateOf<Job?>(null) }
+
+    // 监听缓冲状态变化
+    LaunchedEffect(bufferingState) {
+        if (bufferingState != lastBufferingState) {
+            // 取消之前的动画任务
+            animationJob?.cancel()
+
+            // 根据不同状态设置不同的显示时长
+            val displayDuration = when (bufferingState) {
+                0 -> 0L // 空闲状态不显示
+                1 -> 5000L // 缓冲中显示5秒
+                2 -> 2000L // 准备就绪显示2秒
+                else -> 3000L // 默认3秒
+            }
+
+            if (displayDuration > 0) {
+                showBufferingAnimation = true
+
+                // 启动新的动画任务
+                animationJob = launch {
+                    delay(displayDuration)
+                    showBufferingAnimation = false
+                }
+            } else {
+                showBufferingAnimation = false
+            }
+        }
+        lastBufferingState = bufferingState
+    }
+
+    // 缓冲状态组件销毁时取消动画任务
+    DisposableEffect(Unit) {
+        onDispose {
+            animationJob?.cancel()
+        }
     }
 
     // 主界面布局
@@ -216,15 +268,41 @@ fun RadioScreen(
                     )
 
                     // 缓冲状态
-                    Text(
-                        text = when (bufferingState) {
-                            0 -> stringResource(R.string.status_idle)
-                            1 -> stringResource(R.string.status_buffering)
-                            2 -> stringResource(R.string.status_ready)
-                            else -> stringResource(R.string.status_idle)
-                        },
-                        color = SaltTheme.colors.subText
-                    )
+                    AnimatedVisibility(
+                        visible = showBufferingAnimation,
+                        enter = fadeIn(
+                            animationSpec = tween(
+                                durationMillis = 300,
+                                easing = EaseInOut
+                            )
+                        ) + expandVertically(
+                            animationSpec = tween(
+                                durationMillis = 300,
+                                easing = EaseInOut
+                            )
+                        ),
+                        exit = fadeOut(
+                            animationSpec = tween(
+                                durationMillis = 300,
+                                easing = EaseInOut
+                            )
+                        ) + shrinkVertically(
+                            animationSpec = tween(
+                                durationMillis = 300,
+                                easing = EaseInOut
+                            )
+                        )
+                    ) {
+                        Text(
+                            text = when (bufferingState) {
+                                0 -> stringResource(R.string.status_idle)
+                                1 -> stringResource(R.string.status_buffering)
+                                2 -> stringResource(R.string.status_ready)
+                                else -> stringResource(R.string.status_idle)
+                            },
+                            color = SaltTheme.colors.subText
+                        )
+                    }
 
                     // 总时间
                     Text(
