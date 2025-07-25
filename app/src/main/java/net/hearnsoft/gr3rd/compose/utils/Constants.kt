@@ -21,7 +21,7 @@ object Constants {
     const val STATION_SONG_HISTORY_API: String = "history"
     const val STATION_SONG_RATING_API: String = "rating"
 
-    const val GR_LOGIN_API: String = "login"
+    const val GR_LOGIN_API: String = "login/"
 
     const val COVER_URL: String = "https://gensokyoradio.net/images/albums/"
     const val DEFAULT_COVER_URL: String = "https://gensokyoradio.net/images/assets/no-albumart.png"
