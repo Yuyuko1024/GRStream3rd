@@ -1,5 +1,7 @@
 package net.hearnsoft.gr3rd.compose.ui.screens
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -53,22 +56,28 @@ import com.moriafly.salt.ui.SaltTheme
 import com.moriafly.salt.ui.Text
 import com.moriafly.salt.ui.UnstableSaltUiApi
 import com.moriafly.salt.ui.ext.safeMainPadding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.hearnsoft.gr3rd.compose.R
 import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
+import net.hearnsoft.gr3rd.compose.infrastructure.repository.GRStationNowPlayingRepository
 import net.hearnsoft.gr3rd.compose.ui.theme.GRStream3rdComposeTheme
 import net.hearnsoft.gr3rd.compose.ui.theme.Theme
+import net.hearnsoft.gr3rd.compose.ui.widgets.NowPlayingDialog
+import net.hearnsoft.gr3rd.compose.utils.Logger
 
 @UnstableSaltUiApi
 @Composable
 fun RadioScreen(
     modifier: Modifier = Modifier,
+    context: Context,
     songViewModel: SongViewModel,
     onPlayPauseClick: () -> Unit = {},
-    onRateClick: () -> Unit = {},
-    onMoreInfoClick: () -> Unit = {}
+    onRateClick: () -> Unit = {}
 ) {
     // 收集 ViewModel 状态
     val title by songViewModel.title.collectAsState()
@@ -124,6 +133,73 @@ fun RadioScreen(
         onDispose {
             animationJob?.cancel()
         }
+    }
+
+    // 创建当前播放信息的Repository实例
+    val nowPlayingRepository = remember { GRStationNowPlayingRepository() }
+    // 当前播放信息对话框状态
+    var nowPlayingDataIsLoading by remember { mutableStateOf(false) }
+
+    // 收集对话框状态
+    val showNowPlayingDialog = songViewModel.showSongInfoDialog.collectAsState()
+    val currentSongInfo by songViewModel.currentSongInfo.collectAsState()
+
+    // 当前播放信息对话框事件
+    val onMoreInfoClick : () -> Unit = {
+        // 显示对话框
+        songViewModel.showSongInfoDialog()
+        nowPlayingDataIsLoading = true
+
+        // 异步加载当前播放信息
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val result = nowPlayingRepository.fetchNowPlaying()
+
+                result.fold(
+                    onSuccess = {
+                        songViewModel.updateSongInfo(it)
+                        nowPlayingDataIsLoading = false
+                    },
+                    onFailure = {
+                        Logger.err("MainView", "Failed to fetch now playing data", it)
+                        nowPlayingDataIsLoading = false
+                        songViewModel.hideSongInfo()
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(
+                                context,
+                                "无法获取当前播放信息，请稍后再试",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                )
+            } catch (e: Exception) {
+                Logger.err("MainView", "Failed to load now playing data", e)
+                nowPlayingDataIsLoading = false
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        context,
+                        "无法获取当前播放信息，请稍后再试",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                songViewModel.hideSongInfo()
+            }
+        }
+    }
+
+    if (showNowPlayingDialog.value) {
+        val songData = currentSongInfo?.songInfo
+        // 显示当前播放歌曲信息对话框
+        NowPlayingDialog(
+            onDismiss = {
+                songViewModel.hideSongInfo()
+                nowPlayingDataIsLoading = false
+            },
+            properties = DialogProperties(),
+            nowPlayingSongInfo = songData,
+            isLoading = nowPlayingDataIsLoading
+        )
     }
 
     // 主界面布局
@@ -355,9 +431,9 @@ fun RadioScreenPreview() {
         // 创建一个模拟的 ViewModel 用于预览
         RadioScreen(
             songViewModel = SongViewModel.getInstance(),
+            context = LocalContext.current,
             onPlayPauseClick = {},
-            onRateClick = {},
-            onMoreInfoClick = {}
+            onRateClick = {}
         )
     }
 }
