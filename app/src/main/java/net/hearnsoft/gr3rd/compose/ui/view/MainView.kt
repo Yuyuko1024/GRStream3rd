@@ -41,8 +41,7 @@ fun MainView(
     modifier: Modifier = Modifier,
     context: Context,
     songViewModel: SongViewModel,
-    onPlayPauseClick: () -> Unit = {},
-    onRateClick: () -> Unit = {}
+    onPlayPauseClick: () -> Unit = {}
 ) {
     val navController = rememberNavController()
 
@@ -58,8 +57,7 @@ fun MainView(
             context = context,
             navController = navController,
             songViewModel = songViewModel,
-            onPlayPauseClick = onPlayPauseClick,
-            onRateClick = onRateClick,
+            onPlayPauseClick = onPlayPauseClick
         )
         MainBottomBar(
             navController = navController,
@@ -75,8 +73,7 @@ fun MainNavHost(
     modifier: Modifier = Modifier,
     context: Context,
     songViewModel: SongViewModel,
-    onPlayPauseClick: () -> Unit,
-    onRateClick: () -> Unit
+    onPlayPauseClick: () -> Unit
 ) {
     NavHost(
         modifier = modifier,
@@ -118,8 +115,7 @@ fun MainNavHost(
                     .fillMaxSize(),
                 context = context,
                 songViewModel = songViewModel,
-                onPlayPauseClick = onPlayPauseClick,
-                onRateClick = onRateClick
+                onPlayPauseClick = onPlayPauseClick
             )
         }
         composable(ScreenRoute.Library.route) {
@@ -224,8 +220,7 @@ fun MainPreview() {
         MainView(
             context = LocalContext.current,
             songViewModel = SongViewModel.getInstance(),
-            onPlayPauseClick = {},
-            onRateClick = {}
+            onPlayPauseClick = {}
         )
     }
 }

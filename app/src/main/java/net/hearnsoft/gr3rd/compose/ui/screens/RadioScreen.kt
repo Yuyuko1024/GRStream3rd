@@ -76,8 +76,7 @@ fun RadioScreen(
     modifier: Modifier = Modifier,
     context: Context,
     songViewModel: SongViewModel,
-    onPlayPauseClick: () -> Unit = {},
-    onRateClick: () -> Unit = {}
+    onPlayPauseClick: () -> Unit = {}
 ) {
     // 收集 ViewModel 状态
     val title by songViewModel.title.collectAsState()
@@ -85,7 +84,6 @@ fun RadioScreen(
     val coverUrl by songViewModel.coverUrl.collectAsState()
     val isPlaying by songViewModel.playerStatus.collectAsState()
     val bufferingState by songViewModel.bufferingState.collectAsState()
-    val playButtonEnabled by songViewModel.playBtnStatus.collectAsState()
     val networkConnected by songViewModel.networkStatus.collectAsState()
     val webSocketConnected by songViewModel.webSocketConnected.collectAsState()
 
@@ -291,7 +289,9 @@ fun RadioScreen(
 
                 // 评分按钮
                 IconButton(
-                    onClick = onRateClick,
+                    onClick = {
+                        //TODO("Need to implement")
+                    },
                     modifier = Modifier.padding(end = 6.dp)
                 ) {
                     Icon(
@@ -432,8 +432,7 @@ fun RadioScreenPreview() {
         RadioScreen(
             songViewModel = SongViewModel.getInstance(),
             context = LocalContext.current,
-            onPlayPauseClick = {},
-            onRateClick = {}
+            onPlayPauseClick = {}
         )
     }
 }

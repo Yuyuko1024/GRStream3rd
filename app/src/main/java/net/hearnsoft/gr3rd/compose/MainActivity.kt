@@ -52,8 +52,7 @@ class MainActivity : ComponentActivity() {
                 MainView(
                     context = this@MainActivity,
                     songViewModel = songViewModel,
-                    onPlayPauseClick = { handlePlayPause() },
-                    onRateClick = { showRateDialog() }
+                    onPlayPauseClick = { handlePlayPause() }
                 )
             }
         }
@@ -125,11 +124,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun showRateDialog() {
-        // TODO: 实现评分对话框
-        Logger.info(TAG, "Show rate dialog requested")
-    }
-
     private fun showNoticeDialogIfNeeded() {
         if (!SPStaticUtils.getBoolean(Constants.PREF_SHOWED_NOTICE_DIALOG, false)) {
             // TODO: 实现首次启动通知对话框
@@ -153,8 +147,7 @@ fun MainPreview() {
         MainView(
             context = LocalContext.current,
             songViewModel = SongViewModel.getInstance(),
-            onPlayPauseClick = {},
-            onRateClick = {}
+            onPlayPauseClick = {}
         )
     }
 }
