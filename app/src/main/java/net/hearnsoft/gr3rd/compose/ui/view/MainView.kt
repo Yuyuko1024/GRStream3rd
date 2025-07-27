@@ -25,7 +25,7 @@ import com.moriafly.salt.ui.SaltTheme
 import com.moriafly.salt.ui.UnstableSaltUiApi
 import com.moriafly.salt.ui.ext.safeMainPadding
 import net.hearnsoft.gr3rd.compose.R
-import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
+import net.hearnsoft.gr3rd.compose.ui.viewmodel.SongViewModel
 import net.hearnsoft.gr3rd.compose.ui.screens.AccountScreen
 import net.hearnsoft.gr3rd.compose.ui.screens.HistoryScreen
 import net.hearnsoft.gr3rd.compose.ui.screens.HomeScreen

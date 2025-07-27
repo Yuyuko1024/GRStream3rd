@@ -1,9 +1,16 @@
 package net.hearnsoft.gr3rd.compose.domain.beans
 
+import com.google.gson.annotations.SerializedName
+
 data class LoginData(
-    val RESULT: String,
-    val USERID: String,
-    val USERNAME: String,
-    val APPSESSIONID: String,
-    val API: String
+    @SerializedName("RESULT")
+    val result: String,
+    @SerializedName("USERID")
+    val userId: String,
+    @SerializedName("USERNAME")
+    val username: String,
+    @SerializedName("APPSESSIONID")
+    val appSessionId: String,
+    @SerializedName("API")
+    val api: String
 )

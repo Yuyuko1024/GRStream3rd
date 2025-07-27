@@ -2,7 +2,6 @@ package net.hearnsoft.gr3rd.compose.service
 
 import android.app.PendingIntent
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.MediaItem
@@ -22,8 +21,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import net.hearnsoft.gr3rd.compose.MainActivity
 import net.hearnsoft.gr3rd.compose.R
-import net.hearnsoft.gr3rd.compose.domain.viewmodel.MediaUpdateData
-import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
+import net.hearnsoft.gr3rd.compose.ui.viewmodel.MediaUpdateData
+import net.hearnsoft.gr3rd.compose.ui.viewmodel.SongViewModel
 import net.hearnsoft.gr3rd.compose.utils.AudioSessionManager
 import net.hearnsoft.gr3rd.compose.utils.Constants
 import net.hearnsoft.gr3rd.compose.utils.Logger

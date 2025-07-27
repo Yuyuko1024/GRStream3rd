@@ -20,7 +20,7 @@ class GRApiRepository {
 
                 val loginData = responseBody[0]
 
-                if (loginData.RESULT == "SUCCESS") {
+                if (loginData.result == "SUCCESS") {
                     saveLoginData(loginData)
 
                     val cookie = response.headers()["Set-Cookie"]
@@ -42,9 +42,9 @@ class GRApiRepository {
     }
 
     private fun saveLoginData(loginData: LoginData) {
-        SPStaticUtils.put(Constants.PREF_USERNAME_KEY, loginData.USERNAME)
-        SPStaticUtils.put(Constants.PREF_USERID_KEY, loginData.USERID)
-        SPStaticUtils.put(Constants.PREF_APPSESSIONID_KEY, loginData.APPSESSIONID)
-        SPStaticUtils.put(Constants.PREF_API_KEY, loginData.API)
+        SPStaticUtils.put(Constants.PREF_USERNAME_KEY, loginData.username)
+        SPStaticUtils.put(Constants.PREF_USERID_KEY, loginData.userId)
+        SPStaticUtils.put(Constants.PREF_APPSESSIONID_KEY, loginData.appSessionId)
+        SPStaticUtils.put(Constants.PREF_API_KEY, loginData.api)
     }
 }

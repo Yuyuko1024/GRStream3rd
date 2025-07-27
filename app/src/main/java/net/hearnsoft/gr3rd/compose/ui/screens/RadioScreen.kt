@@ -30,7 +30,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -63,8 +62,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import net.hearnsoft.gr3rd.compose.R
-import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
-import net.hearnsoft.gr3rd.compose.infrastructure.repository.GRStationNowPlayingRepository
+import net.hearnsoft.gr3rd.compose.ui.viewmodel.SongViewModel
+import net.hearnsoft.gr3rd.compose.infrastructure.repository.GRStationApiRepository
 import net.hearnsoft.gr3rd.compose.ui.theme.GRStream3rdComposeTheme
 import net.hearnsoft.gr3rd.compose.ui.theme.Theme
 import net.hearnsoft.gr3rd.compose.ui.widgets.NowPlayingDialog
@@ -134,7 +133,7 @@ fun RadioScreen(
     }
 
     // 创建当前播放信息的Repository实例
-    val nowPlayingRepository = remember { GRStationNowPlayingRepository() }
+    val nowPlayingRepository = remember { GRStationApiRepository() }
     // 当前播放信息对话框状态
     var nowPlayingDataIsLoading by remember { mutableStateOf(false) }
 

@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 import net.hearnsoft.gr3rd.compose.R
 import net.hearnsoft.gr3rd.compose.domain.beans.SocketData
 import net.hearnsoft.gr3rd.compose.domain.beans.RadioClientData
-import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
+import net.hearnsoft.gr3rd.compose.ui.viewmodel.SongViewModel
 import net.hearnsoft.gr3rd.compose.socket.GRWebSocketClient
 import net.hearnsoft.gr3rd.compose.utils.Constants
 import net.hearnsoft.gr3rd.compose.utils.Logger

@@ -19,7 +19,7 @@ import com.moriafly.salt.ui.TitleBar
 import com.moriafly.salt.ui.UnstableSaltUiApi
 import com.moriafly.salt.ui.dialog.YesNoDialog
 import com.moriafly.salt.ui.ext.safeMainPadding
-import net.hearnsoft.gr3rd.compose.domain.viewmodel.UserViewModel
+import net.hearnsoft.gr3rd.compose.ui.viewmodel.UserViewModel
 import net.hearnsoft.gr3rd.compose.ui.theme.GRStream3rdComposeTheme
 import net.hearnsoft.gr3rd.compose.ui.widgets.LoginCard
 import net.hearnsoft.gr3rd.compose.ui.widgets.UserCard

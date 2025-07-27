@@ -1,4 +1,4 @@
-package net.hearnsoft.gr3rd.compose.domain.viewmodel
+package net.hearnsoft.gr3rd.compose.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

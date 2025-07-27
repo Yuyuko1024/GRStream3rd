@@ -3,10 +3,11 @@ package net.hearnsoft.gr3rd.compose.infrastructure.repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.hearnsoft.gr3rd.compose.domain.beans.NowPlayingData
+import net.hearnsoft.gr3rd.compose.domain.beans.OnlineSongHistoryData
 import net.hearnsoft.gr3rd.compose.infrastructure.adapter.GRStationApiClient
 import net.hearnsoft.gr3rd.compose.utils.Logger
 
-class GRStationNowPlayingRepository {
+class GRStationApiRepository {
     private val apiService = GRStationApiClient.apiService
 
     suspend fun fetchNowPlaying(): Result<NowPlayingData> = withContext(Dispatchers.IO) {
@@ -19,6 +20,20 @@ class GRStationNowPlayingRepository {
             }
         } catch (e: Exception) {
             Logger.err("SongRepository", "Fetch data error", e)
+            Result.failure(e)
+        }
+    }
+
+    suspend fun fetchOnlineSongHistory(): Result<List<OnlineSongHistoryData>> = withContext(Dispatchers.IO) {
+        try {
+            val response = apiService.getSongHistory()
+            if (response.isSuccessful && response.body() != null) {
+                Result.success(response.body()!!)
+            } else {
+                Result.failure(Exception("API call failed: ${response.code()}"))
+            }
+        } catch (e: Exception) {
+            Logger.err("SongRepository", "Fetch online song history error", e)
             Result.failure(e)
         }
     }

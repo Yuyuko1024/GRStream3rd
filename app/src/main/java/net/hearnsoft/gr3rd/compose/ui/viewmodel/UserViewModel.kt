@@ -1,4 +1,4 @@
-package net.hearnsoft.gr3rd.compose.domain.viewmodel
+package net.hearnsoft.gr3rd.compose.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -84,7 +84,7 @@ class UserViewModel : ViewModel() {
                         // 登录成功
                         _isLoginSuccess.value = true
                         updateUserInfo(loginData)
-                        Logger.info("UserViewModel", "Login successful: ${loginData.USERNAME}")
+                        Logger.info("UserViewModel", "Login successful: ${loginData.username}")
 
                         // 2秒后切换到 UserCard
                         delay(2000)
@@ -123,8 +123,8 @@ class UserViewModel : ViewModel() {
 
     // 更新用户信息
     private fun updateUserInfo(loginData: LoginData) {
-        _username.value = loginData.USERNAME
-        _userId.value = loginData.USERID
+        _username.value = loginData.username
+        _userId.value = loginData.userId
     }
 
     // 重置登录状态

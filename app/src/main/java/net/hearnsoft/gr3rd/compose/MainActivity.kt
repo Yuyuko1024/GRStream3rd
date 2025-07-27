@@ -21,8 +21,7 @@ import com.hjq.permissions.permission.base.IPermission
 import com.moriafly.salt.ui.UnstableSaltUiApi
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
-import net.hearnsoft.gr3rd.compose.domain.viewmodel.SongViewModel
-import net.hearnsoft.gr3rd.compose.infrastructure.repository.GRStationNowPlayingRepository
+import net.hearnsoft.gr3rd.compose.ui.viewmodel.SongViewModel
 import net.hearnsoft.gr3rd.compose.service.GRStreamPlaybackService
 import net.hearnsoft.gr3rd.compose.ui.theme.GRStream3rdComposeTheme
 import net.hearnsoft.gr3rd.compose.ui.view.MainView
